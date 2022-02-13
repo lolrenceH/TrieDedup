@@ -7,20 +7,28 @@ High-throughput sequencing is powerful and extensively applied in biological stu
 Author : Jianqiao Hu & Adam Yongxin Ye @ BCH
 
 
-# example workflow:
+# example Linux bash workflow:
+
+\# mask low quality bases (Q <= 10) by N 
+
+fastq_masker -Q 33 -q 10 -r N -i raw_seq_file -o input_seq_file
+
+
+\# deduplicate a sequencing library using TrieDedup
+
 python TrieDedup.py --input input_seq_file >uniq_readIDs.txt
+
+
+\# extract unique reads by their IDs 
 
 seqtk subseq input_seq_file uniq_readIDs.txt >uniq_seq_file
 
-The format of input_seq_file will be automatically determined by the filename extension
 
-
-Allowed extensions for input_seq_file include: .fasta .fa .fastq .fq
 
 Additional arguments:
 '--verbose', '-v': Print extra information to the error stream
 
-'--input', '-i': 'The path to tje input file; can either be a fasta or a fastq file'
+'--input', '-i': 'The path to the input file; can either be a fasta or a fastq file. The format of input_seq_file will be automatically determined by the filename extension. Allowed extensions for input_seq_file include: .fasta .fa .fastq .fq'
 
 '--symbols', '-s': 'A string of expected characters in the input file; default is ACGTN.'
 
