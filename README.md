@@ -1,4 +1,4 @@
-# TrieDedup
+# TrieDedup - abstract
 
 
 High-throughput sequencing is powerful and extensively applied in biological studies, although sequencers may report bases with low qualities and lead to ambiguous bases, 'N's. PCR duplicates introduced in library preparation need to be removed in genomics studies, and many deduplication tools have been developed for this purpose. However, the existing tools cannot deal with 'N's correctly or efficiently. Here we proposed and implemented TrieDedup, which uses trie (prefix tree) structure to compare and store sequences. TrieDedup can handle ambiguous base 'N's, and efficiently deduplicate at the level of raw sequences. We also reduced its memory usage by implementing restrictedListDict. We benchmarked the performance, and showed that TrieDedup can deduplicate reads up to 160X faster speed than pairwise comparison, with 36X higher memory usage.
@@ -7,7 +7,7 @@ High-throughput sequencing is powerful and extensively applied in biological stu
 Author : Jianqiao Hu & Adam Yongxin Ye @ BCH
 
 
-# example Linux bash workflow:
+# TrieDedup - example Linux bash workflow:
 
 \# mask low quality bases (Q <= 10) by N 
 
@@ -25,7 +25,7 @@ seqtk subseq input_seq_file uniq_readIDs.txt >uniq_seq_file
 
 
 
-Additional arguments:
+# TrieDedup - Additional arguments:
 '--verbose', '-v': Print extra information to the error stream
 
 '--input', '-i': 'The path to the input file; can either be a fasta or a fastq file. The format of input_seq_file will be automatically determined by the filename extension. Allowed extensions for input_seq_file include: .fasta .fa .fastq .fq'
@@ -39,4 +39,5 @@ Additional arguments:
 '--max_missing', 'N': 'The maxinum number of ambiguous characters allowed in a single read, for it to be considered';  default is 500
 
 '--sorted': 'Use this option if the input file has been sorted by the number of Ns in each read'
+
 
