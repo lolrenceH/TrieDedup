@@ -46,26 +46,26 @@ Usage example: python3 benchmark.py -f trie --STARTING_FCT 0.01 --N_REGION_START
 
 Note: input.csv only need one column of input sequences with colname "seq"
 
-'--STARTING_FCT': "Extract a fraction of reads from the source to use as true unique reads"					
+'--STARTING_FCT': "Extract a fraction of reads from the source to use as true unique reads; required; set to 0 if not needed"					
 
-'--INFLATION_FCT': "Inflate the true unique reads by a specified factor"					
+'--INFLATION_FCT': "Inflate the true unique reads by a specified factor; required; set to 0 if not needed"
 
-'--N_REGION_START': "The base position where Ns start being converted (from 0~1: where 0.5 would denote position 100 on a 200bp long read"	
+'--N_REGION_START': "The base position where Ns start being converted (from 0~1: where 0.5 would denote position 100 on a 200bp long read; required; set to 0 if no need to convert Ns)"
 
-'--N_REGION_END': "The base position where Ns stop being converted (from 0~1: where 0.5 would denote position 100 on a 200bp long read"			
+'--N_REGION_END': "The base position where Ns stop being converted (from 0~1: where 0.5 would denote position 100 on a 200bp long read; required; set to 0 if no need to convert Ns)"
 
-'--REGION_N_FCT': "The percentage of bases that are converted to N in the N region"					
+'--REGION_N_FCT': "The percentage of bases that are converted to N in the N region; required"
 
-'--READ_LENGTH': "The length of reads in the input"					
+'--READ_LENGTH': "The length of reads in the input; required"
 
-'--verbose', '-v': "Print out helpful information"				
+'--verbose', '-v': "Print out helpful information"
 
-'--input', '-i': "The source reads that are uniform in length; a csv file with a header of 'seq' and each row is a read"		
+'--input', '-i': "The source reads that are uniform in length; a csv file with a header of 'seq' and each row is a read; required"
 
-'--function', '-f': "The type of deduplication algorithm to use. options = [pairwise, trie]"			
+'--function', '-f': "The type of deduplication algorithm to use. options = [pairwise, trie]; required"
 
-'--should_benchmark_memory', '-m': "Whether to document memory usage"				
+'--should_benchmark_memory', '-m': "Whether to document memory usage"
 
-'--random': "Set a random seed"					
+'--random': "Set a random seed"
 
-'--print': "Whetehr to print out output"					
+'--print': "Whetehr to print out output"
