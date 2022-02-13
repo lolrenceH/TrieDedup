@@ -9,6 +9,7 @@ Author : Jianqiao Hu & Adam Yongxin Ye @ BCH
 
 # example workflow:
 python TrieDedup.py --input input_seq_file >uniq_readIDs.txt
+
 seqtk subseq input_seq_file uniq_readIDs.txt >uniq_seq_file
 
 The format of input_seq_file will be automatically determined by the filename extension
