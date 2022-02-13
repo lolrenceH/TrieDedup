@@ -26,15 +26,15 @@ seqtk subseq input_seq_file uniq_readIDs.txt >uniq_seq_file
 
 
 # TrieDedup - Additional arguments:
-'--verbose', '-v': Print extra information to the error stream
+'--verbose', '-v': 'Print extra information to the error stream'
 
-'--input', '-i': 'The path to the input file; can either be a fasta or a fastq file. The format of input_seq_file will be automatically determined by the filename extension. Allowed extensions for input_seq_file include: .fasta .fa .fastq .fq'
+'--input', '-i': 'The path to the input file; can either be a fasta or a fastq file. The format of input_seq_file will be automatically determined by the filename extension. Allowed extensions for input_seq_file include: .fasta .fa .fastq .fq; required'
 
 '--symbols', '-s': 'A string of expected characters in the input file; default is ACGTN.'
 
 '--ambiguous', '-m': 'A string of characters that represent ambiguous bases; default is N; there can be more than one such characters'
 
-'--function', '-f': 'Speicify which deduplication algorithm to use; options include trie and pairwise
+'--function', '-f': 'Speicify which deduplication algorithm to use; options include trie and pairwise; default is trie
 
 '--max_missing', 'N': 'The maxinum number of ambiguous characters allowed in a single read, for it to be considered';  default is 500
 
