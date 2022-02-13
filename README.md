@@ -32,7 +32,7 @@ seqtk subseq input_seq_file uniq_readIDs.txt >uniq_seq_file
 
 '--symbols', '-s': 'A string of expected characters in the input file; default is ACGTN.'
 
-'--ambiguous', '-m': 'A string of characters that represent ambiguous bases; default is N; there can be more than one'
+'--ambiguous', '-m': 'A string of characters that represent ambiguous bases; default is N; there can be more than one such characters'
 
 '--function', '-f': 'Speicify which deduplication algorithm to use; options include trie and pairwise
 
