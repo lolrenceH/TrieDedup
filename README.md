@@ -73,6 +73,7 @@ Note: input.csv only need one column of input sequences with colname "seq"
 >[NOTE]: Demultiplexing resulted in 558 unique reads. Time spent: 0.48185184597969055
 
 /#example output
+s
 function	SAMPLE_SIZE	UNIQUE_SAMPLE	DEMULTIPLEXED_SAMPLE	READ_LENGTH	N_REGION	NUM_N	REGION_N_FCT	TOTAL_N_FCT	TIMESPENT	STARTING_FCT	INFLATION_FCT	SOURCE_READS	MEMORY_COST	i
 trie	1000	558	558	200	[0.0, 1.0]	2.0	0.01	0.01	0.48185184597969055	0.007692307692308	1.3	randomReads_100k_200bp_05182021.csv	0.09660495445132256	1
 
