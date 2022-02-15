@@ -54,12 +54,14 @@ Usage example: python3 benchmark.py -f trie --STARTING_FCT 0.01 --N_REGION_START
 
 Note: input.csv only need one column of input sequences with colname "seq"
 
-# TrieDedup - Example usage:
+# TrieDedup - Benchmark example usage:
 
 >python3 benchmark.py -f trie --STARTING_FC 0.007692307692308 --N_REGION_START 0 --N_REGION_END 1 --READ_LENGTH 200 --REGION_N_FCT 0.01 -i /storage/researchers/jianqiao/NasNoDiff/benchmark/randomReads_100k_200bp_05182021.csv  --random 1 -v --should_benchmark_memory
 
 >[NOTE]: Starting with 0.007692307692308 of randomReads_100k_200bp_05182021.csv and inflating by 1.3
+
 >[NOTE]: Inflated sample contain 558 unique reads
+
 >[NOTE]: Masking 2.0 random bases in 0-200 region by N (0.01)
 [NOTE]: 1.0% of the 200bp reads is masked by N ACGTN
 [NOTE] Number of reads (raw) = 1000
@@ -68,7 +70,7 @@ Note: input.csv only need one column of input sequences with colname "seq"
 function	SAMPLE_SIZE	UNIQUE_SAMPLE	DEMULTIPLEXED_SAMPLE	READ_LENGTH	N_REGION	NUM_N	REGION_N_FCT	TOTAL_N_FCT	TIMESPENT	STARTING_FCT	INFLATION_FCT	SOURCE_READS	MEMORY_COST	i
 trie	1000	558	558	200	[0.0, 1.0]	2.0	0.01	0.01	0.48185184597969055	0.007692307692308	1.3	randomReads_100k_200bp_05182021.csv	0.09660495445132256	1
 
-# TrieDedup - Additional arguments:
+# TrieDedup - Benchmark additional arguments:
 
 '--STARTING_FCT': "Extract a fraction of reads from the source to use as true unique reads; required; set to 0 if not needed"					
 
