@@ -23,6 +23,8 @@ Author : Jianqiao Hu & Adam Yongxin Ye @ BCH
 
 >seqtk subseq input_seq_file uniq_readIDs.txt >uniq_seq_file
 
+\# example outputs
+
 > python3 TrieDedup.py -i SRR3744758_1_maskN_filtered_1k.fastq -v  >uniq_readIDs.txt
 
 [NOTE]: Demultiplexing resulted in 920 unique reads. Time spent: 0.7362634092569351
