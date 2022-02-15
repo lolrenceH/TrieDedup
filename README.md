@@ -76,4 +76,4 @@ Note: input.csv only need one column of input sequences with colname "seq"
 
 '--random': "Set a random seed"
 
-'--print': "Whetehr to print out output"
+'--print': "Whether to print out output"
