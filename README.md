@@ -11,21 +11,23 @@ Author : Jianqiao Hu & Adam Yongxin Ye @ BCH
 
 \# mask low quality bases (Q <= 10) by N 
 
-fastq_masker -Q 33 -q 10 -r N -i raw_seq_file -o input_seq_file
+>fastq_masker -Q 33 -q 10 -r N -i raw_seq_file -o input_seq_file
 
 
 \# deduplicate a sequencing library using TrieDedup
 
-python TrieDedup.py --input input_seq_file >uniq_readIDs.txt
+>python TrieDedup.py --input input_seq_file >uniq_readIDs.txt
 
 
 \# extract unique reads by their IDs 
 
-seqtk subseq input_seq_file uniq_readIDs.txt >uniq_seq_file
+>seqtk subseq input_seq_file uniq_readIDs.txt >uniq_seq_file
 
 > python3 TrieDedup.py -i SRR3744758_1_maskN_filtered_1k.fastq -v  >uniq_readIDs.txt
+
 [NOTE]: Demultiplexing resulted in 920 unique reads. Time spent: 0.7362634092569351
 > python3 TrieDedup.py -i SRR3744758_1_maskN_filtered_1k.fastq -v -f pairwise >uniq_readIDs.txt
+
 [NOTE]: Demultiplexing resulted in 920 unique reads. Time spent: 1.543598547577858
 
 
