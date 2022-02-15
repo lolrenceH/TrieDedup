@@ -99,7 +99,7 @@ trie | 1000 | 558 | 558 | 200 | [0.0, 1.0] | 2.0 | 0.01 | 0.01 | 0.4818518459796
 
 '--function', '-f': "The type of deduplication algorithm to use. options = [pairwise, trie]; required"
 
-'--should_benchmark_memory', '-m': "Whether to document memory usage"
+'--should_benchmark_memory', '-m': "Whether to document memory usage; unit in bytes"
 
 '--symbols', '-s': 'A string of expected characters in the input file; default is ACGTN.'
 
