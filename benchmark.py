@@ -15,7 +15,7 @@ from lib.restrictedDict import restrictedListDict
 restrictedListDict.addAllowedKeys('ACGTN')
 
 def parseArg():
-    parser = argparse.ArgumentParser(add_help=False)
+    parser = argparse.ArgumentParser(add_help=True)
     parser.add_argument('--STARTING_FCT', default=0.01, type=float, help="Extract a fraction of reads from the source to use as true unique reads")
     parser.add_argument('--INFLATION_FCT', default=1.3, type=float, help="Inflate the true unique reads by a specified factor")
     parser.add_argument('--N_REGION_START', default=0, type=float, help="The base position where Ns start being converted (from 0~1, where 0.5 would denote position 100 on a 200bp long read)")
@@ -141,6 +141,10 @@ def runRepeats(param_dict, i, inputReads):
 
 def main():
     param_dict = parseArg()
+    
+    if param_dict['should_benchmark_memory']:
+        from guppy import hpy
+    
     # put listener to work first
     # initialize input file
     SOURCE_READS = param_dict['SOURCE_READS']
