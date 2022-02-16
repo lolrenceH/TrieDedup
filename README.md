@@ -1,60 +1,77 @@
-# TrieDedup - abstract
+# TrieDedup: A fast trie-based deduplication algorithm to handle ambiguous bases in high-throughput sequencing
 
+High-throughput sequencing is a powerful tool and is extensively applied in biological studies. However sequencers may report bases with low qualities and lead to ambiguous bases, 'N's. PCR duplicates introduced in library preparation need to be removed in genomics studies, and several deduplication tools have been developed for this purpose. However, the existing tools cannot deal with 'N's correctly or efficiently.
 
-High-throughput sequencing is powerful and extensively applied in biological studies, although sequencers may report bases with low qualities and lead to ambiguous bases, 'N's. PCR duplicates introduced in library preparation need to be removed in genomics studies, and many deduplication tools have been developed for this purpose. However, the existing tools cannot deal with 'N's correctly or efficiently. Here we proposed and implemented TrieDedup, which uses trie (prefix tree) structure to compare and store sequences. TrieDedup can handle ambiguous base 'N's, and efficiently deduplicate at the level of raw sequences. We also reduced its memory usage by implementing restrictedListDict. We benchmarked the performance, and showed that TrieDedup can deduplicate reads up to 160X faster speed than pairwise comparison, with 36X higher memory usage.
-
+Here we proposed and implemented TrieDedup, which uses trie (prefix tree) structure to compare and store sequences. TrieDedup can handle ambiguous base 'N's, and efficiently deduplicate at the level of raw sequence reads. We also reduced its memory usage by implementing restrictedListDict. We benchmarked the performance of the algorithm and showed that TrieDedup can deduplicate reads up to 160X faster than pairwise comparison, but at a cost of 36X higher memory usage.
 
 Author : Jianqiao Hu & Adam Yongxin Ye @ BCH
 
+## Prerequisites
 
-# TrieDedup - example Linux bash workflow:
+- python3
+- [guppy3](https://github.com/zhuyifei1999/guppy3) (just for memory benchmarking)
 
-\# mask low quality bases (Q <= 10) by N 
+## Usage
 
->fastq_masker -Q 33 -q 10 -r N -i raw_seq_file -o input_seq_file
+### Workflow
 
+1. mask low quality bases (Q <= 10) by N  (need [seqtk](https://github.com/lh3/seqtk))
+    >seqtk seq -Q33 -q10 -n N -i raw_seq.fq -o input_seq.fq
 
-\# deduplicate a sequencing library using TrieDedup
+2. deduplicate a sequencing library using TrieDedup
+    >python TrieDedup.py --input input_seq.fq >uniq_readIDs.txt
 
->python TrieDedup.py --input input_seq_file >uniq_readIDs.txt
+3. extract unique reads by their IDs  (need [seqtk](https://github.com/lh3/seqtk))
+    >seqtk subseq input_seq.fq uniq_readIDs.txt >uniq_seq.fq
 
-
-\# extract unique reads by their IDs 
-
->seqtk subseq input_seq_file uniq_readIDs.txt >uniq_seq_file
-
-\# example outputs
+### Test example
 
 > python3 TrieDedup.py -i SRR3744758_1_maskN_filtered_1k.fastq -v  >uniq_readIDs.txt
 
 [NOTE]: Demultiplexing resulted in 920 unique reads. Time spent: 0.7362634092569351
+
 > python3 TrieDedup.py -i SRR3744758_1_maskN_filtered_1k.fastq -v -f pairwise >uniq_readIDs.txt
 
 [NOTE]: Demultiplexing resulted in 920 unique reads. Time spent: 1.543598547577858
 
+### Detailed command-line usage document, and other arguments
 
-# TrieDedup - Additional arguments:
-'--verbose', '-v': 'Print extra information to the error stream'
+> python3 TrieDedup.py -h
+```
+usage: TrieDedup.py [-h] [--verbose] --input INPUT [--symbols SYMBOLS]
+                    [--ambiguous AMBIGUOUS] [--function FUNCTION]
+                    [--max_missing N] [--sorted]
 
-'--input', '-i': 'The path to the input file; can either be a fasta or a fastq file. The format of input_seq_file will be automatically determined by the filename extension. Allowed extensions for input_seq_file include: .fasta .fa .fastq .fq; required'
+optional arguments:
+  -h, --help            show this help message and exit
+  --verbose, -v         Print extra information to the error stream
+  --input INPUT, -i INPUT
+                        The path to tje input file; can either be a fasta or a
+                        fastq file
+  --symbols SYMBOLS, -s SYMBOLS
+                        A string of expected characters in the input file;
+                        default is ACGTN.
+  --ambiguous AMBIGUOUS, -m AMBIGUOUS
+                        A string of characters that represent ambiguous bases;
+                        default is N; there can be more than one
+  --function FUNCTION, -f FUNCTION
+                        Use which function to deduplicate? [trie, pairwise]
+  --max_missing N       The maxinum number of ambiguous characters allowed in
+                        a single read, for it to be considered
+  --sorted              Use this option if the input file has been sorted by
+                        the number of Ns in each read
+```
 
-'--symbols', '-s': 'A string of expected characters in the input file; default is ACGTN.'
 
-'--ambiguous', '-m': 'A string of characters that represent ambiguous bases; default is N; there can be more than one such characters'
+## Benchmark
 
-'--function', '-f': 'Speicify which deduplication algorithm to use; options include trie and pairwise; default is trie
+### Usage example
 
-'--max_missing', 'N': 'The maxinum number of ambiguous characters allowed in a single read, for it to be considered';  default is 500
-
-'--sorted': 'Use this option if the input file has been sorted by the number of Ns in each read'
-
-
-# TrieDedup - Benchmarking:
-Usage example: python3 benchmark.py -f trie --STARTING_FCT 0.01 --N_REGION_START 0 --N_REGION_END 1 --READ_LENGTH 10 --REGION_N_FCT 0.05 -i randomReads_100k_200bp_05182021.csv --random 3  >benchmark_output.txt
+> python3 benchmark.py -f trie --STARTING_FCT 0.01 --N_REGION_START 0 --N_REGION_END 1 --READ_LENGTH 10 --REGION_N_FCT 0.05 -i randomReads_100k_200bp_05182021.csv --random 3  >benchmark_output.txt
 
 Note: input.csv only need one column of input sequences with colname "seq"
 
-# TrieDedup - Benchmark example usage:
+### Example output
 
 >python3 benchmark.py -f trie --STARTING_FC 0.007692307692308 --N_REGION_START 0 --N_REGION_END 1 --READ_LENGTH 200 --REGION_N_FCT 0.01 -i randomReads_100k_200bp_05182021.csv  --random 1 -v --should_benchmark_memory
 
@@ -79,30 +96,51 @@ function | SAMPLE_SIZE | UNIQUE_SAMPLE | DEMULTIPLEXED_SAMPLE | READ_LENGTH | N_
 --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- 
 trie | 1000 | 558 | 558 | 200 | [0.0, 1.0] | 2.0 | 0.01 | 0.01 | 0.48185184597969055 | 0.007692307692308 | 1.3 | randomReads_100k_200bp_05182021.csv | 0.09660495445132256 | 1
 
-# TrieDedup - Benchmark additional arguments:
+### Detailed command-line usage document, and additional arguments:
 
-'--STARTING_FCT': "Extract a fraction of reads from the source to use as true unique reads; required; set to 0 if not needed"					
+> python3 benchmark.py  -h
+```
+usage: benchmark.py [-h] [--STARTING_FCT STARTING_FCT]
+                    [--INFLATION_FCT INFLATION_FCT]
+                    [--N_REGION_START N_REGION_START]
+                    [--N_REGION_END N_REGION_END]
+                    [--REGION_N_FCT REGION_N_FCT] --READ_LENGTH READ_LENGTH
+                    [--verbose] --input SOURCE_READS --function
+                    TESTED_FUNCTION [--should_benchmark_memory]
+                    [--symbols SYMBOLS] [--random RANDOM] [--print]
 
-'--INFLATION_FCT': "Inflate the true unique reads by a specified factor; required; set to 0 if not needed"
+optional arguments:
+  -h, --help            show this help message and exit
+  --STARTING_FCT STARTING_FCT
+                        Extract a fraction of reads from the source to use as
+                        true unique reads
+  --INFLATION_FCT INFLATION_FCT
+                        Inflate the true unique reads by a specified factor
+  --N_REGION_START N_REGION_START
+                        The base position where Ns start being converted (from
+                        0~1, where 0.5 would denote position 100 on a 200bp
+                        long read)
+  --N_REGION_END N_REGION_END
+                        The base position where Ns stop being converted (from
+                        0~1, where 0.5 would denote position 100 on a 200bp
+                        long read)
+  --REGION_N_FCT REGION_N_FCT
+                        The percentage of bases that are converted to N in the
+                        N region
+  --READ_LENGTH READ_LENGTH
+                        The length of reads in the input
+  --verbose, -v         Print out helpful information
+  --input SOURCE_READS, -i SOURCE_READS
+                        The source reads that are uniform in length; a csv
+                        file with a header of 'seq' and each row is a read
+  --function TESTED_FUNCTION, -f TESTED_FUNCTION
+                        The type of deduplication algorithm to use [pairwise,
+                        trie]
+  --should_benchmark_memory, -m
+                        Whether to document memory usage
+  --symbols SYMBOLS, -s SYMBOLS
+                        The bases in the inputl; default = ACGTN
+  --random RANDOM       Set a random seed
+  --print               Whetehr to print out output
+```
 
-'--N_REGION_START': "The base position where Ns start being converted (from 0~1: where 0.5 would denote position 100 on a 200bp long read; required; set to 0 if no need to convert Ns)"
-
-'--N_REGION_END': "The base position where Ns stop being converted (from 0~1: where 0.5 would denote position 100 on a 200bp long read; required; set to 0 if no need to convert Ns)"
-
-'--REGION_N_FCT': "The percentage of bases that are converted to N in the N region; required"
-
-'--READ_LENGTH': "The length of reads in the input; required"
-
-'--verbose', '-v': "Print out helpful information"
-
-'--input', '-i': "The source reads that are uniform in length; a csv file with a header of 'seq' and each row is a read; required"
-
-'--function', '-f': "The type of deduplication algorithm to use. options = [pairwise, trie]; required"
-
-'--should_benchmark_memory', '-m': "Whether to document memory usage; unit in bytes"
-
-'--symbols', '-s': 'A string of expected characters in the input file; default is ACGTN.'
-
-'--random': "Set a random seed"
-
-'--print': "Whether to print out output"
