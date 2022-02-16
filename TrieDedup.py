@@ -21,13 +21,13 @@ from Bio import SeqIO
 
 
 def parseArg():
-    parser = argparse.ArgumentParser(add_help=False)
+    parser = argparse.ArgumentParser(add_help=True)
     parser.add_argument('--verbose', '-v', default=False, action='store_true',help='Print extra information to the error stream')
     parser.add_argument('--input', '-i', dest='input', type=str, required=True, help='The path to tje input file; can either be a fasta or a fastq file')
     parser.add_argument('--symbols', '-s', dest='symbols', default='ACGTN', type=str, help='A string of expected characters in the input file; default is ACGTN.')
     parser.add_argument('--ambiguous', '-m', dest='ambiguous', default='N', type=str, help='A string of characters that represent ambiguous bases; default is N; there can be more than one')
     parser.add_argument('--function', '-f', default='trie', type=str,help='Use which function to deduplicate? [trie, pairwise]')
-    parser.add_argument('--max_missing', dest='N', default=500, type=int, help='The maxinum number of ambiguous characters allowed in a single read, for it to be considered')
+    parser.add_argument('--max_missing', '-N', dest='N', default=500, type=int, help='The maxinum number of ambiguous characters allowed in a single read, for it to be considered')
     parser.add_argument('--sorted', default=False, action="store_true",help='Use this option if the input file has been sorted by the number of Ns in each read')
     args = parser.parse_args().__dict__
     return args
@@ -87,12 +87,13 @@ def main():
     input_df_sort = read_input(input_reads, param_dict)
     # start timer
     function = param_dict['function']
+    if param_dict['verbose']:
+        print(f'[Note] Start deduplicating using {function} algorithm', file=sys.stderr)
     # start deduplication
     if function == 'trie':
-        ans_list = lib.trie.collapseSeq(input_df_sort['query'], allowed_symbols=param_dict['symbols'],ambiguous_symbols=param_dict['ambiguous'],is_input_sorted = param_dict['sorted'], max_missing=param_dict['N'])
-
+        ans_list = lib.trie.collapseSeq(input_df_sort['query'], allowed_symbols=param_dict['symbols'], ambiguous_symbols=param_dict['ambiguous'], is_input_sorted=param_dict['sorted'], max_missing=param_dict['N'], verbose=param_dict['verbose'])
     elif function == 'pairwise':
-        ans_list = lib.pairwise.collapseSeq(input_df_sort['query'],max_missing=param_dict['N'])
+        ans_list = lib.pairwise.collapseSeq(input_df_sort['query'], max_missing=param_dict['N'])
     input_df_sort["unqiue"] = ans_list[0]
     time_spent = ans_list[1]
     # end deduplication
@@ -103,7 +104,7 @@ def main():
     for u_id in unique_id:
         print(u_id)
     if param_dict['verbose']:
-        print(f'[NOTE]: Demultiplexing resulted in {num_dedup} unique reads. Time spent: {time_spent}', file=sys.stderr)
+        print(f'[NOTE] Deduplicating resulted in {num_dedup} unique reads. Time spent: {time_spent} s', file=sys.stderr)
 
 
 if __name__ == '__main__':
