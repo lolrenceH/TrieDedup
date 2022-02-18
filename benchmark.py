@@ -11,27 +11,28 @@ import pandas as pd
 import lib.pairwise
 import lib.trie
 from lib.restrictedDict import restrictedListDict
+from guppy import hpy
 
 restrictedListDict.addAllowedKeys('ACGTN')
 
 def parseArg():
-    parser = argparse.ArgumentParser(add_help=True)
-    parser.add_argument('--STARTING_FCT', default=0.01, type=float, help="Extract a fraction of reads from the source to use as true unique reads")
-    parser.add_argument('--INFLATION_FCT', default=1.3, type=float, help="Inflate the true unique reads by a specified factor")
-    parser.add_argument('--N_REGION_START', default=0, type=float, help="The base position where Ns start being converted (from 0~1, where 0.5 would denote position 100 on a 200bp long read)")
-    parser.add_argument('--N_REGION_END', default=1, type=float, help="The base position where Ns stop being converted (from 0~1, where 0.5 would denote position 100 on a 200bp long read)")
-    parser.add_argument('--REGION_N_FCT', default=0.3, type=float, help="The percentage of bases that are converted to N in the N region")
-    parser.add_argument('--READ_LENGTH', type=int, required=True, help="The length of reads in the input")
-    parser.add_argument('--verbose', '-v', default=False, action='store_true', help="Print out helpful information")
-    parser.add_argument('--input', '-i', dest='SOURCE_READS', required=True, type=str, help="The source reads that are uniform in length; a csv file with a header of 'seq' and each row is a read")
-    parser.add_argument('--function', '-f', dest='TESTED_FUNCTION', required=True, type=str, help="The type of deduplication algorithm to use [pairwise, trie]")
-    parser.add_argument('--should_benchmark_memory', '-m', default=False, action='store_true', help="Whether to document memory usage")
-    parser.add_argument('--symbols', '-s', dest='symbols', default='ACGTN', type=str, help="The bases in the inputl; default = ACGTN ")
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument('--STARTING_FCT', default=0.01, type=float)
+    parser.add_argument('--INFLATION_FCT', default=1.3, type=float)
+    parser.add_argument('--N_REGION_START', default=0, type=float)
+    parser.add_argument('--N_REGION_END', default=1, type=float)
+    parser.add_argument('--REGION_N_FCT', default=0.3, type=float)
+    parser.add_argument('--READ_LENGTH', default=500, type=int)
+    parser.add_argument('--verbose', '-v', default=False, action='store_true')
+    parser.add_argument('--input', '-i', dest='SOURCE_READS', required=True, type=str)
+    parser.add_argument('--function', '-f', dest='TESTED_FUNCTION', required=True, type=str)
+    parser.add_argument('--should_benchmark_memory', '-m', default=False, action='store_true')
+    parser.add_argument('--symbols', '-s', dest='symbols', default='ACGTN', type=str)
     # 06172021 added print and ID options. print enables parallel running of multiple benchmark scripts whose outputs
     # are separated by > different file ### this does not work with tsp
     # 06182021 added add_mutually_exclusive_group such that you either specify repetitions or specify random states
-    parser.add_argument('--random', default=1, type=int, help="Set a random seed")
-    parser.add_argument('--print', default=True, action='store_true', help="Whetehr to print out output")
+    parser.add_argument('--random', default=1, type=int)
+    parser.add_argument('--print', default=True, action='store_true')
     # 06232021 added heap_mem_out: file path to where memory usage info will be written in byte unit
     args = parser.parse_args().__dict__
     args['N_REGION'] = [args['N_REGION_START'], args['N_REGION_END']]
@@ -83,8 +84,6 @@ def runRepeats(param_dict, i, inputReads):
     READ_LENGTH = param_dict['READ_LENGTH']
     N_REGION = param_dict['N_REGION']
     REGION_N_FCT = param_dict['REGION_N_FCT']
-    if param_dict['verbose']:
-        print(STARTING_FCT, INFLATION_FCT, READ_LENGTH, N_REGION, REGION_N_FCT)
     coord_regionN = [int(READ_LENGTH * N_REGION[0]), int(READ_LENGTH * N_REGION[1])]
     # setting up test df
     test = inputReads.sample(frac=STARTING_FCT, random_state=i)
@@ -101,16 +100,17 @@ def runRepeats(param_dict, i, inputReads):
     NUM_N = REGION_N_FCT * (coord_regionN[1] - coord_regionN[0])
     TOTAL_N_FCT = NUM_N / READ_LENGTH
     if param_dict['verbose']:
-        print(f'[DEBUG] {test_inflated["seq"]}')
         print(f'[NOTE]: Masking {NUM_N} random bases in {coord_regionN[0]}-{coord_regionN[1]} region by N ({REGION_N_FCT})')
-        print(f'[NOTE]: {TOTAL_N_FCT * 100}% of the {READ_LENGTH}bp reads is masked by N')
+        print(f'[NOTE]: {TOTAL_N_FCT * 100}% of the {READ_LENGTH}bp reads is masked by N {param_dict["symbols"]}')
     # construct Trie and document time
     # write a list of bool values to indicate whether each sequence is unique or it has been seen
-
+    hpy_obj = None
+    if should_benchmark_memory:
+        hpy_obj=hpy()
     if function == 'trie':
-        ans_list = lib.trie.collapseSeq(test_inflated["seq"], param_dict, should_benchmark_memory=should_benchmark_memory, allowed_symbols=param_dict['symbols'],ambiguous_symbols=param_dict['ambiguous'])
+        ans_list = lib.trie.collapseSeq(test_inflated["seq"], hp=hpy_obj, allowed_symbols=param_dict['symbols'],ambiguous_symbols='N')
     elif function == 'pairwise':
-        ans_list = lib.pairwise.collapseSeq(test_inflated["seq"], should_benchmark_memory=should_benchmark_memory,max_missing=param_dict['N'])
+        ans_list = lib.pairwise.collapseSeq(test_inflated["seq"], hp=hpy_obj,max_missing=param_dict['N'])
     try:
         test_inflated['UNIQUE'] = ans_list[0]
     except ValueError:
@@ -141,10 +141,6 @@ def runRepeats(param_dict, i, inputReads):
 
 def main():
     param_dict = parseArg()
-    
-    if param_dict['should_benchmark_memory']:
-        from guppy import hpy
-    
     # put listener to work first
     # initialize input file
     SOURCE_READS = param_dict['SOURCE_READS']
