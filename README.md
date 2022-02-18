@@ -26,11 +26,11 @@ Author : Jianqiao Hu & Adam Yongxin Ye @ BCH
 
 ### Test example
 
-> python3 TrieDedup.py -i SRR3744758_1_maskN_filtered_1k.fastq -v  >uniq_readIDs.txt
+> python3 TrieDedup.py -i data/SRR3744758_1_maskN_filtered_1k.fastq -v  >uniq_readIDs.txt
 
 [NOTE]: Demultiplexing resulted in 920 unique reads. Time spent: 0.7362634092569351
 
-> python3 TrieDedup.py -i SRR3744758_1_maskN_filtered_1k.fastq -v -f pairwise >uniq_readIDs.txt
+> python3 TrieDedup.py -i data/SRR3744758_1_maskN_filtered_1k.fastq -v -f pairwise >uniq_readIDs.txt
 
 [NOTE]: Demultiplexing resulted in 920 unique reads. Time spent: 1.543598547577858
 
@@ -67,15 +67,15 @@ optional arguments:
 
 ### Usage example
 
-> python3 benchmark.py -f trie --STARTING_FCT 0.01 --N_REGION_START 0 --N_REGION_END 1 --READ_LENGTH 10 --REGION_N_FCT 0.05 -i randomReads_100k_200bp_05182021.csv --random 3  >benchmark_output.txt
+> python3 benchmark.py -f trie --STARTING_FCT 0.01 --N_REGION_START 0 --N_REGION_END 1 --READ_LENGTH 10 --REGION_N_FCT 0.05 -i data/randomReads_1k_200bp.csv --random 3  >benchmark_output.txt
 
 Note: input.csv only need one column of input sequences with colname "seq"
 
 ### Example output
 
->python3 benchmark.py -f trie --STARTING_FC 0.007692307692308 --N_REGION_START 0 --N_REGION_END 1 --READ_LENGTH 200 --REGION_N_FCT 0.01 -i randomReads_100k_200bp_05182021.csv  --random 1 -v --should_benchmark_memory
+>python3 benchmark.py -f trie --STARTING_FC 0.007692307692308 --N_REGION_START 0 --N_REGION_END 1 --READ_LENGTH 200 --REGION_N_FCT 0.01 -i data/randomReads_1k_200bp.csv --random 1 -v --should_benchmark_memory
 
->[NOTE]: Starting with 0.007692307692308 of randomReads_100k_200bp_05182021.csv and inflating by 1.3
+>[NOTE]: Starting with 0.007692307692308 of data/randomReads_1k_200bp.csv and inflating by 1.3
 
 >[NOTE]: Inflated sample contain 558 unique reads
 
@@ -94,7 +94,7 @@ Note: input.csv only need one column of input sequences with colname "seq"
 
 function | SAMPLE_SIZE | UNIQUE_SAMPLE | DEMULTIPLEXED_SAMPLE | READ_LENGTH | N_REGION | NUM_N | REGION_N_FCT | TOTAL_N_FCT | TIMESPENT | STARTING_FCT | INFLATION_FCT | SOURCE_READS | MEMORY_COST | i
 --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- 
-trie | 1000 | 558 | 558 | 200 | [0.0, 1.0] | 2.0 | 0.01 | 0.01 | 0.48185184597969055 | 0.007692307692308 | 1.3 | randomReads_100k_200bp_05182021.csv | 0.09660495445132256 | 1
+trie | 1000 | 558 | 558 | 200 | [0.0, 1.0] | 2.0 | 0.01 | 0.01 | 0.48185184597969055 | 0.007692307692308 | 1.3 | data/randomReads_1k_200bp.csv | 0.09660495445132256 | 1
 
 ### Detailed command-line usage document, and additional arguments:
 
