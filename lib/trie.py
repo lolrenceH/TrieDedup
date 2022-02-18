@@ -91,7 +91,7 @@ class TrieNode(Set):
 
 
 def collapseSeq(seqs, allowed_symbols='ACGTN', ambiguous_symbols='N', is_input_sorted=False, max_missing=500,
-                hp=False):
+                hp=None):
     """
     Removes duplicate sequences
 
