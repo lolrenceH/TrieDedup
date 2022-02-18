@@ -7,7 +7,6 @@
 import sys
 
 from lib.restrictedDict import restrictedListDict
-from guppy import hpy
 from collections.abc import Set
 import timeit
 
@@ -92,7 +91,7 @@ class TrieNode(Set):
 
 
 def collapseSeq(seqs, allowed_symbols='ACGTN', ambiguous_symbols='N', is_input_sorted=False, max_missing=500,
-                should_benchmark_memory=False):
+                hp=False):
     """
     Removes duplicate sequences
 
@@ -102,14 +101,11 @@ def collapseSeq(seqs, allowed_symbols='ACGTN', ambiguous_symbols='N', is_input_s
       ambiguous_symbols: the list of ambiguous symbols, such as 'N'
       is_input_sorted : is the input seqs already sorted by num_N; if not, I will sort in this function
       max_missing : number of ambiguous characters to allow in a unique sequence.
-      should_benchmark_memory : benchmark memory usage or not.
+      hp : hyp() object for memory benchmarking.
 
     Returns:
       is_uniq_vec, time cost, [memory usage]
     """
-    hp = None
-    if should_benchmark_memory:
-        hp = hpy()
     start_time = timeit.default_timer()
     restrictedListDict.addAllowedKeys(allowed_symbols)
     trie = TrieNode()
@@ -139,14 +135,14 @@ def collapseSeq(seqs, allowed_symbols='ACGTN', ambiguous_symbols='N', is_input_s
             uniq_dict[seq] = True
 
     TIMESPENT = timeit.default_timer() - start_time
-    if should_benchmark_memory:
+    if hp:
         h = hp.heap()
     is_uniq_vec = [0] * len(seqs)
     for i in range(len(seqs)):
         if seqs[i] in uniq_dict:
             is_uniq_vec[i] = 1
             del uniq_dict[seqs[i]]
-    if should_benchmark_memory:
+    if hp:
         return [is_uniq_vec, TIMESPENT, h]
     return [is_uniq_vec, TIMESPENT]
 

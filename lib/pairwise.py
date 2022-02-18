@@ -5,7 +5,6 @@
 import timeit
 import re
 from itertools import zip_longest
-from guppy import hpy
 
 
 ### reference: pRESTO https://bitbucket.org/kleinstein/presto/src/master/bin/CollapseSeq.py
@@ -134,7 +133,7 @@ def findUniqueSeq(uniq_dict, search_keys, seq_dict, max_missing=3,
     return uniq_dict, search_keys, dup_keys
 
 
-def collapseSeq(seqs, max_missing=500, inner=False, should_benchmark_memory=False):
+def collapseSeq(seqs, max_missing=500, inner=False, hp=False):
     """
     Removes duplicate sequences
 
@@ -142,7 +141,7 @@ def collapseSeq(seqs, max_missing=500, inner=False, should_benchmark_memory=Fals
       seqs : the input sequences
       max_missing : number of ambiguous characters to allow in a unique sequence.
       inner : if True exclude consecutive outer ambiguous characters from iterations and matching.
-      should_benchmark_memory : benchmark memory usage or not.
+      hp : hyp() object for memory benchmarking.
 
     Returns:
       is_uniq_vec, time cost, [memory usage]
@@ -150,9 +149,7 @@ def collapseSeq(seqs, max_missing=500, inner=False, should_benchmark_memory=Fals
     seq_dict = {}
     for i in range(len(seqs)):
         seq_dict[i] = seqs[i]   # the dict of input sequences, key = idx, value = sequence
-    hp = None
-    if should_benchmark_memory:
-        hp = hpy()
+
     start_time = timeit.default_timer()
     # Find sequences with duplicates
     uniq_dict = {}
@@ -171,13 +168,13 @@ def collapseSeq(seqs, max_missing=500, inner=False, should_benchmark_memory=Fals
         # Break if no keys to search remain
         if len(search_keys) == 0:  break
     TIMESPENT = timeit.default_timer() - start_time
-    if should_benchmark_memory:
+    if hp:
         h = hp.heap()
     is_uniq_vec = [0] * len(seqs)
     for i in range(len(seqs)):
         if seqs[i] in uniq_dict:
             is_uniq_vec[i] = 1
             del uniq_dict[seqs[i]]
-    if should_benchmark_memory:
+    if hp:
         return [is_uniq_vec, TIMESPENT, h]
     return [is_uniq_vec, TIMESPENT]
