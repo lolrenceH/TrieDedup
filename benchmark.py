@@ -11,7 +11,7 @@ import pandas as pd
 import lib.pairwise
 import lib.trie
 from lib.restrictedDict import restrictedListDict
-from guppy import hpy
+
 
 restrictedListDict.addAllowedKeys('ACGTN')
 
@@ -114,7 +114,8 @@ def runRepeats(param_dict, i, inputReads):
     # write a list of bool values to indicate whether each sequence is unique or it has been seen
     hpy_obj = None
     if should_benchmark_memory:
-        hpy_obj=hpy()
+        from guppy import hpy
+        hpy_obj = hpy()
     if function == 'trie':
         ans_list = lib.trie.collapseSeq(test_inflated["seq"], hp=hpy_obj, allowed_symbols=param_dict['symbols'],ambiguous_symbols='N')
     elif function == 'pairwise':
