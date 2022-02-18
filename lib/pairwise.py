@@ -133,7 +133,7 @@ def findUniqueSeq(uniq_dict, search_keys, seq_dict, max_missing=3,
     return uniq_dict, search_keys, dup_keys
 
 
-def collapseSeq(seqs, max_missing=500, inner=False, hp=False):
+def collapseSeq(seqs, max_missing=500, inner=False, hp=None):
     """
     Removes duplicate sequences
 
