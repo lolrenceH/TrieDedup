@@ -27,7 +27,7 @@ def parseArg():
                         help="The base position where Ns stop being converted (from 0~1, where 0.5 would denote position 100 on a 200bp long read)")
     parser.add_argument('--REGION_N_FCT', default=0.3, type=float,
                         help="The percentage of bases that are converted to N in the N region")
-    parser.add_argument('--READ_LENGTH', type=int, required=True, help="The length of reads in the input")
+    parser.add_argument('--READ_LENGTH', type=int, required=True, help="The length of query reads (can be less or equal to the length in the input)")
     parser.add_argument('--verbose', '-v', default=False, action='store_true', help="Print out helpful information")
     parser.add_argument('--input', '-i', dest='SOURCE_READS', required=True, type=str,
                         help="The source reads that are uniform in length; a csv file with a header of 'seq' and each row is a read")
@@ -48,7 +48,7 @@ def parseArg():
 
 
 def insertN(read, readLen, fctN, regionN=[0, 1]):
-    read = read[:readLen]
+    read = read[:readLen]  # only keep the left readLen part of input reads
     coord_regionN = [int(readLen * regionN[0]),
                      int(readLen * regionN[1])]  # the coordinates of the specific region of insertion
     regionLen = coord_regionN[1] - coord_regionN[0]  # the length of the insertion region
