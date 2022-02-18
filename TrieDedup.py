@@ -17,7 +17,6 @@ import pandas as pd
 import lib.pairwise
 import lib.trie
 from lib.restrictedDict import restrictedListDict
-from Bio import SeqIO
 
 
 def parseArg():
@@ -40,10 +39,67 @@ def check_seqFile_type(input_path):
         return "fastq"
     elif file_extension == ".fasta" or file_extension == ".fa":
         return "fasta"
+    elif file_extension == ".txt" or file_extension == ".csv" or file_extension == ".tsv" or file_extension == ".list":
+        return "text"
     else:
         raise FileNotFoundError(f"[ERROR]: Cannot determine the extension of {input_path}; Please specify with --type")
 
+def read_fasta(input_path):
+    names_vec = []
+    seqs_vec = []
+    now_name = ''
+    now_seq = ''
+    with open(input_path, 'r') as infile:
+        for line in infile:
+            line = line.rstrip()
+            if line[0] == '>':
+                if now_name != '':
+                    names_vec.append(now_name)
+                    seq_vec.append(now_seq)
+                now_name = line[1:]
+                now_seq = ''
+            else:
+                now_seq += line
+        if now_name != '':
+            names_vec.append(now_name)
+            seq_vec.append(now_seq)
+    return names_vec, seq_vec
 
+def read_fastq(input_path):
+    names_vec = []
+    seqs_vec = []
+    now_name = ''
+    with open(input_path, 'r') as infile:
+        NR = 0
+        for line in infile:
+            NR += 1
+            line = line.rstrip()
+            if NR % 4 == 1:
+                now_name = ''
+                if line[0] == '@':
+                    now_name = line[1:]
+                elif len(line) > 0:
+                    print(f'Warning: {NR}-th line does not start with @, invalid fastq format', file=sys.stderr)
+            elif NR % 4 == 2:
+                if now_name != '':
+                    names_vec.append(now_name)
+                    seq_vec.append(line)
+    return names_vec, seq_vec
+
+def read_text(input_path):
+    names_vec = []
+    seqs_vec = []
+    with open(input_path, 'r') as infile:
+        NR = 0
+        for line in infile:
+            NR += 1
+            line = line.rstrip()
+            if NR == 1 and line == 'seq': # skip headline of colname 'seq'
+                continue
+            names_vec.append(str(NR))
+            seq_vec.append(line)
+    return names_vec, seq_vec
+    
 def read_input(input_reads, param_dict):
     """
     :param input_reads: path to the input sequencing file
@@ -51,14 +107,20 @@ def read_input(input_reads, param_dict):
     :return: a pd.DataFrame sorted by number of Ns, containing 3 columns ['name', 'query', 'num_N']
     """
     input_type = check_seqFile_type(input_reads)
-    SeqIO_parser = SeqIO.parse(open(input_reads), input_type)
     # build pd.df of input
     names_ls = []
     query_ls = []
-    for read in SeqIO_parser:
-        name, query = read.id, str(read.seq)
-        names_ls.append(name)
-        query_ls.append(query)
+    if input_type == 'fasta':
+        names_ls, query_ls = read_fasta(input_reads)
+    elif input_type == 'fastq':
+        names_ls, query_ls = read_fastq(input_reads)
+    elif input_type == 'text':
+        names_ls, query_ls = read_text(input_reads)
+#    SeqIO_parser = SeqIO.parse(open(input_reads), input_type)
+#    for read in SeqIO_parser:
+#        name, query = read.id, str(read.seq)
+#        names_ls.append(name)
+#        query_ls.append(query)
     input_df = pd.DataFrame({'name': names_ls, 'query': query_ls})
     #input_df["num_N"] = [seq.count('N') for seq in input_df['query']]
     #input_df_sort = input_df.sort_values(by=['num_N'])
