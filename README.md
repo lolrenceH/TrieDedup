@@ -9,6 +9,7 @@ Author : Jianqiao Hu & Adam Yongxin Ye @ BCH
 ## Prerequisites
 
 - python3
+- pandas
 - [guppy3](https://github.com/zhuyifei1999/guppy3) (just for memory benchmarking)
 
 ## Usage
@@ -26,7 +27,7 @@ Author : Jianqiao Hu & Adam Yongxin Ye @ BCH
 
 ### Test example
 
-> python3 TrieDedup.py -i data/SRR3744758_1_maskN_filtered_1k.fastq -v  >uniq_readIDs.txt
+> python3 TrieDedup.py -i data/SRR3744758_1_maskN_filtered_1k.fastq -v  >uniq_readIDs.txt  # equivalent to also adding '-f trie', by default
 
 [NOTE]: Demultiplexing resulted in 920 unique reads. Time spent: 0.7362634092569351
 
