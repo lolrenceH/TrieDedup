@@ -5,6 +5,7 @@
 import timeit
 import re
 from itertools import zip_longest
+from guppy import hpy
 
 
 ### reference: pRESTO https://bitbucket.org/kleinstein/presto/src/master/bin/CollapseSeq.py
@@ -133,7 +134,7 @@ def findUniqueSeq(uniq_dict, search_keys, seq_dict, max_missing=3,
     return uniq_dict, search_keys, dup_keys
 
 
-def collapseSeq(seqs, max_missing=500, inner=False, should_benchmark_memory=False, verbose=False):
+def collapseSeq(seqs, max_missing=500, inner=False, should_benchmark_memory=False):
     """
     Removes duplicate sequences
 

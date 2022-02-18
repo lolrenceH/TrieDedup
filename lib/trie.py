@@ -7,7 +7,7 @@
 import sys
 
 from lib.restrictedDict import restrictedListDict
-import numpy as np
+from guppy import hpy
 from collections.abc import Set
 import timeit
 
@@ -92,7 +92,7 @@ class TrieNode(Set):
 
 
 def collapseSeq(seqs, allowed_symbols='ACGTN', ambiguous_symbols='N', is_input_sorted=False, max_missing=500,
-                should_benchmark_memory=False, verbose=False):
+                should_benchmark_memory=False):
     """
     Removes duplicate sequences
 
@@ -117,24 +117,19 @@ def collapseSeq(seqs, allowed_symbols='ACGTN', ambiguous_symbols='N', is_input_s
     if len(ambiguous_symbols) > 1:  # convert all ambiguous symbols to ambiguous_symbols[0]
         for ch in ambiguous_symbols[1:]:
             seqs = [seq.replace(ch, ambiguous_symbols[0]) for seq in seqs]
-    if verbose:
-        print(f"[NOTE] Number of reads (raw) = {len(seqs)}", file=sys.stderr)
+    print(f"[NOTE] Number of reads (raw) = {len(seqs)}", file=sys.stderr)
     unique_seqs = list(set(seqs))
-    if verbose:
-        print(f"[NOTE] Number of reads (without exact matches) = {len(unique_seqs)}", file=sys.stderr)
+    # print(f"[NOTE] Number of reads (without exact matches) = {len(unique_seqs)}", file=sys.stderr)
 
     unique_seqs_filtered = [u_s for u_s in unique_seqs if u_s.count('N') <= max_missing]
     unique_seqs_Nfiltered_sorted = unique_seqs_filtered
     if not is_input_sorted:
-        if verbose:
-            print(f"[NOTE] sorting...",file=sys.stderr)
+        print(f"[NOTE] sorting...",file=sys.stderr)
         unique_seqs_Nfiltered_sorted.sort(key=lambda x: x.count('N'))
-    if verbose:
-        print( f"[NOTE] Number of reads (without exact matches) that have {max_missing} N or less = {len(unique_seqs_Nfiltered_sorted)}", file=sys.stderr)
+    # print( f"[NOTE] Number of reads (without exact matches) that have {max_missing} N or less = {len(unique_seqs_Nfiltered_sorted)}", file=sys.stderr)
 
     TIMESPENT2 = timeit.default_timer() - start_time
-    if verbose:
-        print(f"[NOTE] collapseSeq preprocess (filter, sort) done. Time spent: {TIMESPENT2} s", file=sys.stderr)
+    # print(f"[NOTE] collapseSeq_v2 drop, filter, sort {TIMESPENT2}", file=sys.stderr)
 
     uniq_dict = {}
     for si in range(len(unique_seqs_Nfiltered_sorted)):
