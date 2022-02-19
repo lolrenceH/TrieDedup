@@ -57,7 +57,8 @@ optional arguments:
                         default is N; there can be more than one
   --function FUNCTION, -f FUNCTION
                         Use which function to deduplicate? [trie, pairwise]
-  --max_missing N       The maxinum number of ambiguous characters allowed in
+  --max_missing N, -N N
+                        The maxinum number of ambiguous characters allowed in
                         a single read, for it to be considered
   --sorted              Use this option if the input file has been sorted by
                         the number of Ns in each read
@@ -68,34 +69,40 @@ optional arguments:
 
 ### Usage example
 
-> python3 benchmark.py -f trie --STARTING_FCT 0.01 --N_REGION_START 0 --N_REGION_END 1 --READ_LENGTH 10 --REGION_N_FCT 0.05 -i data/randomReads_1k_200bp.csv --random 3  >benchmark_output.txt
+#### Benchmark running time
+
+> python3 benchmark.py -f trie --STARTING_FCT 0.8 --N_REGION_START 0 --N_REGION_END 1 --READ_LENGTH 200 --REGION_N_FCT 0.05 -i data/randomReads_1k_200bp.csv --random 3 -v 
+
+```
+[NOTE]: Starting with 0.8 of data/randomReads_1k_200bp.csv and inflating by 1.3
+[NOTE]: Inflated sample contain 574 unique reads
+[NOTE]: Masking 10.0 random bases in 0-200 region by N (0.05)
+[NOTE]: 5.0% of the 200bp reads is masked by N ACGTN
+[NOTE] Number of reads (raw) = 1040
+[NOTE] sorting...
+[NOTE]: Demultiplexing resulted in 574 unique reads. Time spent: 0.3799940496683121
+function        SAMPLE_SIZE     UNIQUE_SAMPLE   DEMULTIPLEXED_SAMPLE    READ_LENGTH     N_REGION        NUM_N   REGION_N_FCT       TOTAL_N_FCT     TIMESPENT       STARTING_FCT    INFLATION_FCT   SOURCE_READS    i
+trie    1040    574     574     200     [0.0, 1.0]      10.0    0.05    0.05    0.3799940496683121      0.8     1.3 data/randomReads_1k_200bp.csv   3
+```
 
 Note: input.csv only need one column of input sequences with colname "seq"
 
-### Example output
+#### Benchmark memory usage
 
->python3 benchmark.py -f trie --STARTING_FC 0.007692307692308 --N_REGION_START 0 --N_REGION_END 1 --READ_LENGTH 200 --REGION_N_FCT 0.01 -i data/randomReads_1k_200bp.csv --random 1 -v --should_benchmark_memory
+>python3 benchmark.py -f trie --STARTING_FC 0.8 --N_REGION_START 0 --N_REGION_END 1 --READ_LENGTH 200 --REGION_N_FCT 0.01 -i data/randomReads_1k_200bp.csv --random 3 -v --should_benchmark_memory
 
->[NOTE]: Starting with 0.007692307692308 of data/randomReads_1k_200bp.csv and inflating by 1.3
+```
+[NOTE]: Starting with 0.8 of data/randomReads_1k_200bp.csv and inflating by 1.3
+[NOTE]: Inflated sample contain 574 unique reads
+[NOTE]: Masking 2.0 random bases in 0-200 region by N (0.01)
+[NOTE]: 1.0% of the 200bp reads is masked by N ACGTN
+[NOTE] Number of reads (raw) = 1040
+[NOTE] sorting...
+[NOTE]: Demultiplexing resulted in 574 unique reads. Time spent: 0.37278418242931366
+function        SAMPLE_SIZE     UNIQUE_SAMPLE   DEMULTIPLEXED_SAMPLE    READ_LENGTH     N_REGION        NUM_N   REGION_N_FCT       TOTAL_N_FCT     TIMESPENT       STARTING_FCT    INFLATION_FCT   SOURCE_READS    MEMORY_COST     i
+trie    1040    574     574     200     [0.0, 1.0]      2.0     0.01    0.01    0.37278418242931366     0.8     1.3 data/randomReads_1k_200bp.csv   0.05788425728678703     3
+```
 
->[NOTE]: Inflated sample contain 558 unique reads
-
->[NOTE]: Masking 2.0 random bases in 0-200 region by N (0.01)
-
->[NOTE]: 1.0% of the 200bp reads is masked by N ACGTN
-
->[NOTE] Number of reads (raw) = 1000
-
->[NOTE] sorting...
-
->[NOTE]: Demultiplexing resulted in 558 unique reads. Time spent: 0.48185184597969055
-
-\# example outputs
-
-
-function | SAMPLE_SIZE | UNIQUE_SAMPLE | DEMULTIPLEXED_SAMPLE | READ_LENGTH | N_REGION | NUM_N | REGION_N_FCT | TOTAL_N_FCT | TIMESPENT | STARTING_FCT | INFLATION_FCT | SOURCE_READS | MEMORY_COST | i
---- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- 
-trie | 1000 | 558 | 558 | 200 | [0.0, 1.0] | 2.0 | 0.01 | 0.01 | 0.48185184597969055 | 0.007692307692308 | 1.3 | data/randomReads_1k_200bp.csv | 0.09660495445132256 | 1
 
 ### Detailed command-line usage document, and additional arguments:
 
