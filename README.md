@@ -87,7 +87,7 @@ optional arguments:
 
 #### Benchmark running time
 
-> python3 benchmark.py -f trie --STARTING_FCT 0.8 --N_REGION_START 0 --N_REGION_END 1 --READ_LENGTH 200 --REGION_N_FCT 0.05 -i data/randomReads_1k_200bp.csv --random 3 -v 
+> python3 benchmark.py -f trie --STARTING_FCT 0.8 --N_REGION_START 0 --N_REGION_END 1 --READ_LENGTH 200 --REGION_N_FCT 0.05 -i data/randomReads_1k_200bp.csv --random 3 -v  >benchmark_output.txt
 
 ```
 [NOTE] Starting with 0.8 of data/randomReads_1k_200bp.csv and inflating by 1.3
@@ -96,27 +96,22 @@ optional arguments:
 [NOTE] 5.0% of the 200bp reads is masked by N ACGTN
 [NOTE] Number of reads (raw) = 1040
 [NOTE] sorting...
-[NOTE] Demultiplexing resulted in 574 unique reads. Time spent: 0.4174044728279114
-function        SAMPLE_SIZE     UNIQUE_SAMPLE   DEMULTIPLEXED_SAMPLE    READ_LENGTH     N_REGION        NUM_N   REGION_N_FCT       TOTAL_N_FCT     TIMESPENT       STARTING_FCT    INFLATION_FCT   SOURCE_READS    i
-trie    1040    574     574     200     [0.0, 1.0]      10.0    0.05    0.05    0.4174044728279114      0.8     1.3 data/randomReads_1k_200bp.csv   3
+[NOTE] Demultiplexing resulted in 574 unique reads. Time spent: 0.3654523342847824 s
 ```
 
-Note: input.csv only need one column of input sequences with colname "seq"
 
 #### Benchmark memory usage
 
->python3 benchmark.py -f trie --STARTING_FC 0.8 --N_REGION_START 0 --N_REGION_END 1 --READ_LENGTH 200 --REGION_N_FCT 0.01 -i data/randomReads_1k_200bp.csv --random 3 -v --should_benchmark_memory
+>python3 benchmark.py -f trie --STARTING_FC 0.8 --N_REGION_START 0 --N_REGION_END 1 --READ_LENGTH 200 --REGION_N_FCT 0.05 -i data/randomReads_1k_200bp.csv --random 3 -v --should_benchmark_memory  >benchmark_output.txt
 
 ```
 [NOTE] Starting with 0.8 of data/randomReads_1k_200bp.csv and inflating by 1.3
 [NOTE] Inflated sample contain 574 unique reads
-[NOTE] Masking 2.0 random bases in 0-200 region by N (0.01)
-[NOTE] 1.0% of the 200bp reads is masked by N ACGTN
+[NOTE] Masking 10.0 random bases in 0-200 region by N (0.05)
+[NOTE] 5.0% of the 200bp reads is masked by N ACGTN
 [NOTE] Number of reads (raw) = 1040
 [NOTE] sorting...
-[NOTE] Demultiplexing resulted in 574 unique reads. Time spent: 0.4140053987503052
-function        SAMPLE_SIZE     UNIQUE_SAMPLE   DEMULTIPLEXED_SAMPLE    READ_LENGTH     N_REGION        NUM_N   REGION_N_FCT       TOTAL_N_FCT     TIMESPENT       STARTING_FCT    INFLATION_FCT   SOURCE_READS    MEMORY_COST     i
-trie    1040    574     574     200     [0.0, 1.0]      2.0     0.01    0.01    0.4140053987503052      0.8     1.3 data/randomReads_1k_200bp.csv   0.057884715497493744    3
+[NOTE] Demultiplexing resulted in 574 unique reads. Time spent: 0.40281282365322113 s
 ```
 
 
@@ -169,3 +164,4 @@ optional arguments:
   --print               Whetehr to print out output
 ```
 
+Note: input.csv only need one column of input sequences with colname "seq"
