@@ -27,13 +27,29 @@ Author : Jianqiao Hu & Adam Yongxin Ye @ BCH
 
 ### Test example
 
-> python3 TrieDedup.py -i data/SRR3744758_1_maskN_filtered_1k.fastq -v  >uniq_readIDs.txt  # equivalent to also adding '-f trie', by default
+> python3 TrieDedup.py -i data/SRR3744758_1_maskN_filtered_1k.fastq -v  >uniq_readIDs.txt
 
-[NOTE]: Demultiplexing resulted in 920 unique reads. Time spent: 0.7362634092569351
+Note: equivalent to also adding the optional argument '-f trie', which is default
+
+```
+[LOG] Reading in data/SRR3744758_1_maskN_filtered_1k.fastq
+[LOG] Number of raw reads = 1000
+[LOG] Number of raw reads that have 500 N or less = 1000
+[NOTE] Start deduplicating using trie algorithm
+[NOTE] Number of reads (raw) = 1000
+[NOTE] sorting...
+[NOTE] Deduplicating resulted in 920 unique reads. Time spent: 0.6605931371450424 s
+```
 
 > python3 TrieDedup.py -i data/SRR3744758_1_maskN_filtered_1k.fastq -v -f pairwise >uniq_readIDs.txt
 
-[NOTE]: Demultiplexing resulted in 920 unique reads. Time spent: 1.543598547577858
+```
+[LOG] Reading in data/SRR3744758_1_maskN_filtered_1k.fastq
+[LOG] Number of raw reads = 1000
+[LOG] Number of raw reads that have 500 N or less = 1000
+[NOTE] Start deduplicating using pairwise algorithm
+[NOTE] Deduplicating resulted in 920 unique reads. Time spent: 1.7831905633211136 s
+```
 
 ### Detailed command-line usage document, and other arguments
 
@@ -80,9 +96,9 @@ optional arguments:
 [NOTE]: 5.0% of the 200bp reads is masked by N ACGTN
 [NOTE] Number of reads (raw) = 1040
 [NOTE] sorting...
-[NOTE]: Demultiplexing resulted in 574 unique reads. Time spent: 0.3799940496683121
+[NOTE]: Demultiplexing resulted in 574 unique reads. Time spent: 0.4174044728279114
 function        SAMPLE_SIZE     UNIQUE_SAMPLE   DEMULTIPLEXED_SAMPLE    READ_LENGTH     N_REGION        NUM_N   REGION_N_FCT       TOTAL_N_FCT     TIMESPENT       STARTING_FCT    INFLATION_FCT   SOURCE_READS    i
-trie    1040    574     574     200     [0.0, 1.0]      10.0    0.05    0.05    0.3799940496683121      0.8     1.3 data/randomReads_1k_200bp.csv   3
+trie    1040    574     574     200     [0.0, 1.0]      10.0    0.05    0.05    0.4174044728279114      0.8     1.3 data/randomReads_1k_200bp.csv   3
 ```
 
 Note: input.csv only need one column of input sequences with colname "seq"
@@ -98,15 +114,15 @@ Note: input.csv only need one column of input sequences with colname "seq"
 [NOTE]: 1.0% of the 200bp reads is masked by N ACGTN
 [NOTE] Number of reads (raw) = 1040
 [NOTE] sorting...
-[NOTE]: Demultiplexing resulted in 574 unique reads. Time spent: 0.37278418242931366
+[NOTE]: Demultiplexing resulted in 574 unique reads. Time spent: 0.4140053987503052
 function        SAMPLE_SIZE     UNIQUE_SAMPLE   DEMULTIPLEXED_SAMPLE    READ_LENGTH     N_REGION        NUM_N   REGION_N_FCT       TOTAL_N_FCT     TIMESPENT       STARTING_FCT    INFLATION_FCT   SOURCE_READS    MEMORY_COST     i
-trie    1040    574     574     200     [0.0, 1.0]      2.0     0.01    0.01    0.37278418242931366     0.8     1.3 data/randomReads_1k_200bp.csv   0.05788425728678703     3
+trie    1040    574     574     200     [0.0, 1.0]      2.0     0.01    0.01    0.4140053987503052      0.8     1.3 data/randomReads_1k_200bp.csv   0.057884715497493744    3
 ```
 
 
 ### Detailed command-line usage document, and additional arguments:
 
-> python3 benchmark.py  -h
+> python3 benchmark.py -h
 ```
 usage: benchmark.py [-h] [--STARTING_FCT STARTING_FCT]
                     [--INFLATION_FCT INFLATION_FCT]
@@ -136,7 +152,8 @@ optional arguments:
                         The percentage of bases that are converted to N in the
                         N region
   --READ_LENGTH READ_LENGTH
-                        The length of reads in the input
+                        The length of query reads (can be less or equal to the
+                        length in the input)
   --verbose, -v         Print out helpful information
   --input SOURCE_READS, -i SOURCE_READS
                         The source reads that are uniform in length; a csv
