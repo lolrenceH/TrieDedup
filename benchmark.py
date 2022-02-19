@@ -99,8 +99,8 @@ def runRepeats(param_dict, i, inputReads):
     SAMPLE_SIZE = len(test_inflated)
     UNIQUE_SAMPLE = len(test_inflated.drop_duplicates())
     if param_dict['verbose']:
-        print(f'[NOTE]: Starting with {STARTING_FCT} of {param_dict["SOURCE_READS"]} and inflating by {INFLATION_FCT}')
-        print(f'[NOTE]: Inflated sample contain {UNIQUE_SAMPLE} unique reads')
+        print(f'[NOTE]: Starting with {STARTING_FCT} of {param_dict["SOURCE_READS"]} and inflating by {INFLATION_FCT}', file=sys.stderr)
+        print(f'[NOTE]: Inflated sample contain {UNIQUE_SAMPLE} unique reads', file=sys.stderr)
     # masking by N; added set seed for decimal Ns (1.5N has 50/50 chance to be 1 or 2)
     random.seed(i)
     test_inflated["seq"] = [insertN(seq, READ_LENGTH, REGION_N_FCT, N_REGION) for seq in test_inflated["seq"]]
@@ -108,8 +108,8 @@ def runRepeats(param_dict, i, inputReads):
     NUM_N = REGION_N_FCT * (coord_regionN[1] - coord_regionN[0])
     TOTAL_N_FCT = NUM_N / READ_LENGTH
     if param_dict['verbose']:
-        print(f'[NOTE]: Masking {NUM_N} random bases in {coord_regionN[0]}-{coord_regionN[1]} region by N ({REGION_N_FCT})')
-        print(f'[NOTE]: {TOTAL_N_FCT * 100}% of the {READ_LENGTH}bp reads is masked by N {param_dict["symbols"]}')
+        print(f'[NOTE]: Masking {NUM_N} random bases in {coord_regionN[0]}-{coord_regionN[1]} region by N ({REGION_N_FCT})', file=sys.stderr)
+        print(f'[NOTE]: {TOTAL_N_FCT * 100}% of the {READ_LENGTH}bp reads is masked by N {param_dict["symbols"]}', file=sys.stderr)
     # construct Trie and document time
     # write a list of bool values to indicate whether each sequence is unique or it has been seen
     hpy_obj = None
@@ -132,7 +132,7 @@ def runRepeats(param_dict, i, inputReads):
         MEMORY_COST = str(ans_list[2].size/1024**3)
 
     if param_dict['verbose']:
-        print(f'[NOTE]: Demultiplexing resulted in {DEMULTIPLEXED_SAMPLE} unique reads. Time spent: {TIMESPENT}')
+        print(f'[NOTE]: Demultiplexing resulted in {DEMULTIPLEXED_SAMPLE} unique reads. Time spent: {TIMESPENT}', file=sys.stderr)
 
     # 01192022 no need for ID column --> remove
     variable_set = ['function', 'SAMPLE_SIZE', 'UNIQUE_SAMPLE', 'DEMULTIPLEXED_SAMPLE', 'READ_LENGTH', 'N_REGION', 'NUM_N', 'REGION_N_FCT', 'TOTAL_N_FCT', 'TIMESPENT', 'STARTING_FCT', 'INFLATION_FCT', 'SOURCE_READS']
