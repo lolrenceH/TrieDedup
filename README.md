@@ -9,7 +9,7 @@ Author : Jianqiao Hu & Adam Yongxin Ye @ BCH
 ## Prerequisites
 
 - python3
-- pandas
+- [pandas](https://pandas.pydata.org/docs/getting_started/install.html)
 - [guppy3](https://github.com/zhuyifei1999/guppy3) (just for memory benchmarking)
 
 ## Usage
