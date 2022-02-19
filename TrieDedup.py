@@ -161,7 +161,7 @@ def main():
     # start timer
     function = param_dict['function']
     if param_dict['verbose']:
-        print(f'[Note] Start deduplicating using {function} algorithm', file=sys.stderr)
+        print(f'[NOTE] Start deduplicating using {function} algorithm', file=sys.stderr)
     # start deduplication
     if function == 'trie':
         ans_list = lib.trie.collapseSeq(input_df_sort['query'], allowed_symbols=param_dict['symbols'],
