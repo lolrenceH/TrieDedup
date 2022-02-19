@@ -1,7 +1,7 @@
 # This is a command-line warpper for benchmark
 # @Author : Jianqiao Hu & Adam Yongxin Ye @ BCH
 """
-Usage example: python3 benchmark.py -f trie --STARTING_FCT 0.01 --N_REGION_START 0 --N_REGION_END 1 --READ_LENGTH 10 --REGION_N_FCT 0.05 -i benchmark/randomReads_100k_200bp_05182021.csv --random 3  >benchmark_output.txt
+Usage example: python3 benchmark.py -f trie --STARTING_FCT 0.8 --N_REGION_START 0 --N_REGION_END 1 --READ_LENGTH 200 --REGION_N_FCT 0.05 -i data/randomReads_1k_200bp.csv --random 3 -v  >benchmark_output.txt
 
 Note: input.csv only need one column of input sequences with colname "seq"
 """
