@@ -4,7 +4,7 @@ High-throughput sequencing is a powerful tool and is extensively applied in biol
 
 Here we proposed and implemented TrieDedup, which uses trie (prefix tree) structure to compare and store sequences. TrieDedup can handle ambiguous base 'N's, and efficiently deduplicate at the level of raw sequence reads. We also reduced its memory usage by implementing restrictedListDict. We benchmarked the performance of the algorithm and showed that TrieDedup can deduplicate reads up to 160X faster than pairwise comparison, but at a cost of 36X higher memory usage.
 
-Author : Jianqiao Hu & Adam Yongxin Ye @ BCH
+Author : Jianqiao Hu & Adam Yongxin Ye @ Boston Children's Hospital (BCH)
 
 ## Prerequisites
 
@@ -90,13 +90,13 @@ optional arguments:
 > python3 benchmark.py -f trie --STARTING_FCT 0.8 --N_REGION_START 0 --N_REGION_END 1 --READ_LENGTH 200 --REGION_N_FCT 0.05 -i data/randomReads_1k_200bp.csv --random 3 -v 
 
 ```
-[NOTE]: Starting with 0.8 of data/randomReads_1k_200bp.csv and inflating by 1.3
-[NOTE]: Inflated sample contain 574 unique reads
-[NOTE]: Masking 10.0 random bases in 0-200 region by N (0.05)
-[NOTE]: 5.0% of the 200bp reads is masked by N ACGTN
+[NOTE] Starting with 0.8 of data/randomReads_1k_200bp.csv and inflating by 1.3
+[NOTE] Inflated sample contain 574 unique reads
+[NOTE] Masking 10.0 random bases in 0-200 region by N (0.05)
+[NOTE] 5.0% of the 200bp reads is masked by N ACGTN
 [NOTE] Number of reads (raw) = 1040
 [NOTE] sorting...
-[NOTE]: Demultiplexing resulted in 574 unique reads. Time spent: 0.4174044728279114
+[NOTE] Demultiplexing resulted in 574 unique reads. Time spent: 0.4174044728279114
 function        SAMPLE_SIZE     UNIQUE_SAMPLE   DEMULTIPLEXED_SAMPLE    READ_LENGTH     N_REGION        NUM_N   REGION_N_FCT       TOTAL_N_FCT     TIMESPENT       STARTING_FCT    INFLATION_FCT   SOURCE_READS    i
 trie    1040    574     574     200     [0.0, 1.0]      10.0    0.05    0.05    0.4174044728279114      0.8     1.3 data/randomReads_1k_200bp.csv   3
 ```
@@ -108,13 +108,13 @@ Note: input.csv only need one column of input sequences with colname "seq"
 >python3 benchmark.py -f trie --STARTING_FC 0.8 --N_REGION_START 0 --N_REGION_END 1 --READ_LENGTH 200 --REGION_N_FCT 0.01 -i data/randomReads_1k_200bp.csv --random 3 -v --should_benchmark_memory
 
 ```
-[NOTE]: Starting with 0.8 of data/randomReads_1k_200bp.csv and inflating by 1.3
-[NOTE]: Inflated sample contain 574 unique reads
-[NOTE]: Masking 2.0 random bases in 0-200 region by N (0.01)
-[NOTE]: 1.0% of the 200bp reads is masked by N ACGTN
+[NOTE] Starting with 0.8 of data/randomReads_1k_200bp.csv and inflating by 1.3
+[NOTE] Inflated sample contain 574 unique reads
+[NOTE] Masking 2.0 random bases in 0-200 region by N (0.01)
+[NOTE] 1.0% of the 200bp reads is masked by N ACGTN
 [NOTE] Number of reads (raw) = 1040
 [NOTE] sorting...
-[NOTE]: Demultiplexing resulted in 574 unique reads. Time spent: 0.4140053987503052
+[NOTE] Demultiplexing resulted in 574 unique reads. Time spent: 0.4140053987503052
 function        SAMPLE_SIZE     UNIQUE_SAMPLE   DEMULTIPLEXED_SAMPLE    READ_LENGTH     N_REGION        NUM_N   REGION_N_FCT       TOTAL_N_FCT     TIMESPENT       STARTING_FCT    INFLATION_FCT   SOURCE_READS    MEMORY_COST     i
 trie    1040    574     574     200     [0.0, 1.0]      2.0     0.01    0.01    0.4140053987503052      0.8     1.3 data/randomReads_1k_200bp.csv   0.057884715497493744    3
 ```
