@@ -114,6 +114,12 @@ optional arguments:
 [NOTE] Demultiplexing resulted in 574 unique reads. Time spent: 0.40281282365322113 s
 ```
 
+> less benchmark_output.txt
+
+```
+function        SAMPLE_SIZE     UNIQUE_SAMPLE   DEMULTIPLEXED_SAMPLE    READ_LENGTH     N_REGION        NUM_N   REGION_N_FCT    TOTAL_N_FCT     TIMESPENT       STARTING_FCT    INFLATION_FCT   SOURCE_READS    MEMORY_COST     i
+trie    1040    574     574     200     [0.0, 1.0]      10.0    0.05    0.05    0.40281282365322113     0.8     1.3     data/randomReads_1k_200bp.csv   0.05796102527529001     3
+```
 
 ### Detailed command-line usage document, and additional arguments:
 
