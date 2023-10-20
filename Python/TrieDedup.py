@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # This is a simple command-line wrapper of TrieDedup
 # @Author : Jianqiao Hu & Adam Yongxin Ye @ BCH
 """
@@ -24,7 +26,7 @@ def parseArg():
     parser.add_argument('--verbose', '-v', default=False, action='store_true',
                         help='Print extra information to the error stream')
     parser.add_argument('--input', '-i', dest='input', type=str, required=True,
-                        help='The path to tje input file; can either be a fasta or a fastq file')
+                        help='The path to the input file; can either be a fasta or a fastq file')
     parser.add_argument('--symbols', '-s', dest='symbols', default='ACGTN', type=str,
                         help='A string of expected characters in the input file; default is ACGTN.')
     parser.add_argument('--ambiguous', '-m', dest='ambiguous', default='N', type=str,
