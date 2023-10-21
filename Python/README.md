@@ -8,7 +8,7 @@ Author : Jianqiao Hu & Adam Yongxin Ye @ Boston Children's Hospital (BCH)
 - python3
 - [pandas](https://pandas.pydata.org/docs/getting_started/install.html)
 - [guppy3](https://github.com/zhuyifei1999/guppy3) (just for memory benchmarking)
-
+- seqtk
 
 ## Usage
 
