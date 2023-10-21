@@ -221,7 +221,7 @@ if implementation.lower() == 'python':
 		command += f' >{output_filename}.txt'
 	check_file_then_exec_command([f'{output_filename}.txt', output_filename], command, True, True, False)
 	
-	command = f'seqtk subset {input_filename} {output_filename}.txt >{output_filename}'
+	command = f'seqtk subseq {input_filename} {output_filename}.txt >{output_filename}'
 	check_file_then_exec_command([output_filename], command, True, True, False)
 	
 	check_final_file_then_remove_intermediate_file([output_filename], [f'{output_filename}.txt'])
