@@ -7,7 +7,7 @@ Results: Here we proposed and implemented TrieDedup, which uses trie (prefix tre
 Author: Adam Yongxin Ye & Jianqiao Hu @ Boston Children's Hospital / Harvard Medical School
 
 
-## Implementation
+## Implementation and Requirement
 
 - [C++ version](https://github.com/lolrenceH/TrieDedup/tree/master/Cpp)
 - [Java version](https://github.com/lolrenceH/TrieDedup/tree/master/Java)
