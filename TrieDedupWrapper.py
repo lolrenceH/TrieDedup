@@ -10,9 +10,25 @@ def _print(*args, **kwargs):
 	print(*args, **kwargs)
 	file.flush()
 
+
 def die(message):
 	sys.stderr.write(message + "\n")
 	sys.exit(1)
+
+
+import random, string
+
+def random_string(length):
+	"""
+	Generate a random string of a fixed length.
+
+	Parameters:
+	- length (int): Length of the random string to be generated.
+
+	Returns:
+	- str: Randomly generated string.
+	"""
+	return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(length))
 
 
 ### reference: Yyx_system_command_functions.20160607.pl, tlx2bed_v3.py
@@ -212,19 +228,28 @@ start_time = time.time()
 _print('[PYTHON-START] ' + time.ctime(), file=sys.stderr)
 
 if implementation.lower() == 'python':
+	output_txt_filename = output_filename
+	if output_txt_filename == '':
+		output_txt_filename = random_string(10)
+	output_txt_filename += '.txt'
 	script_path = os.path.join(my_script_dir, 'Python', 'TrieDedup.py')
 	command = f'python {script_path} --function {subcommand} --max_missing {max_missing}'
 	if is_input_sorted:
 		command += ' --sorted'
-	command += f' --input {input_filename}'
-	if output_filename != '':
-		command += f' >{output_filename}.txt'
-	check_file_then_exec_command([f'{output_filename}.txt', output_filename], command, True, True, False)
+	command += f' --input {input_filename} >{output_txt_filename}'
+	check_file_then_exec_command([output_txt_filename, output_filename], command, True, True, False)
 	
-	command = f'seqtk subseq {input_filename} {output_filename}.txt >{output_filename}'
+	
+	command = f'seqtk subseq {input_filename} {output_txt_filename}'
+	if output_filename != '':
+		command += f' >{output_filename}'
 	check_file_then_exec_command([output_filename], command, True, True, False)
 	
-	check_final_file_then_remove_intermediate_file([output_filename], [f'{output_filename}.txt'])
+	if output_filename != '':
+		check_final_file_then_remove_intermediate_file([output_filename], [output_txt_filename])
+	else:
+		_print('[PYTHON-REMOVE] ' + output_txt_filename, file=sys.stderr)
+		os.remove(output_txt_filename)
 	
 elif implementation.lower() == 'java':
 	script_path = os.path.join(my_script_dir, 'Java', 'TrieDedup.jar')

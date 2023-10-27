@@ -8,7 +8,7 @@ Author : Jianqiao Hu & Adam Yongxin Ye @ Boston Children's Hospital (BCH)
 - python3
 - [pandas](https://pandas.pydata.org/docs/getting_started/install.html)
 - [guppy3](https://github.com/zhuyifei1999/guppy3) (just for memory benchmarking)
-- seqtk
+- [seqtk](https://github.com/lh3/seqtk)
 
 ## Usage
 
@@ -25,12 +25,12 @@ Author : Jianqiao Hu & Adam Yongxin Ye @ Boston Children's Hospital (BCH)
 
 ### Test example
 
-> python3 TrieDedup.py -i data/SRR3744758_1_maskN_filtered_1k.fastq -v  >uniq_readIDs.txt
+> python3 TrieDedup.py -i ../test_data/SRR3744758_1_maskN_filtered_1k.fastq -v  >uniq_readIDs.txt
 
 Note: equivalent to also adding the optional argument '-f trie', which is default
 
 ```
-[LOG] Reading in data/SRR3744758_1_maskN_filtered_1k.fastq
+[LOG] Reading in ../test_data/SRR3744758_1_maskN_filtered_1k.fastq
 [LOG] Number of raw reads = 1000
 [LOG] Number of raw reads that have 500 N or less = 1000
 [NOTE] Start deduplicating using trie algorithm
@@ -39,10 +39,10 @@ Note: equivalent to also adding the optional argument '-f trie', which is defaul
 [NOTE] Deduplicating resulted in 920 unique reads. Time spent: 0.6605931371450424 s
 ```
 
-> python3 TrieDedup.py -i data/SRR3744758_1_maskN_filtered_1k.fastq -v -f pairwise >uniq_readIDs.txt
+> python3 TrieDedup.py -i ../test_data/SRR3744758_1_maskN_filtered_1k.fastq -v -f pairwise >uniq_readIDs.txt
 
 ```
-[LOG] Reading in data/SRR3744758_1_maskN_filtered_1k.fastq
+[LOG] Reading in ../test_data/SRR3744758_1_maskN_filtered_1k.fastq
 [LOG] Number of raw reads = 1000
 [LOG] Number of raw reads that have 500 N or less = 1000
 [NOTE] Start deduplicating using pairwise algorithm
@@ -85,10 +85,10 @@ optional arguments:
 
 #### Benchmark running time
 
-> python3 benchmark.py -f trie --STARTING_FCT 0.8 --N_REGION_START 0 --N_REGION_END 1 --READ_LENGTH 200 --REGION_N_FCT 0.05 -i data/randomReads_1k_200bp.csv --random 3 -v  >benchmark_output.txt
+> python3 benchmark.py -f trie --STARTING_FCT 0.8 --N_REGION_START 0 --N_REGION_END 1 --READ_LENGTH 200 --REGION_N_FCT 0.05 -i ../test_data/randomReads_1k_200bp.csv --random 3 -v  >benchmark_output.txt
 
 ```
-[NOTE] Starting with 0.8 of data/randomReads_1k_200bp.csv and inflating by 1.3
+[NOTE] Starting with 0.8 of ../test_data/randomReads_1k_200bp.csv and inflating by 1.3
 [NOTE] Inflated sample contain 574 unique reads
 [NOTE] Masking 10.0 random bases in 0-200 region by N (0.05)
 [NOTE] 5.0% of the 200bp reads is masked by N ACGTN
@@ -100,10 +100,10 @@ optional arguments:
 
 #### Benchmark memory usage
 
->python3 benchmark.py -f trie --STARTING_FC 0.8 --N_REGION_START 0 --N_REGION_END 1 --READ_LENGTH 200 --REGION_N_FCT 0.05 -i data/randomReads_1k_200bp.csv --random 3 -v --should_benchmark_memory  >benchmark_output.txt
+>python3 benchmark.py -f trie --STARTING_FC 0.8 --N_REGION_START 0 --N_REGION_END 1 --READ_LENGTH 200 --REGION_N_FCT 0.05 -i ../test_data/randomReads_1k_200bp.csv --random 3 -v --should_benchmark_memory  >benchmark_output.txt
 
 ```
-[NOTE] Starting with 0.8 of data/randomReads_1k_200bp.csv and inflating by 1.3
+[NOTE] Starting with 0.8 of ../test_data/randomReads_1k_200bp.csv and inflating by 1.3
 [NOTE] Inflated sample contain 574 unique reads
 [NOTE] Masking 10.0 random bases in 0-200 region by N (0.05)
 [NOTE] 5.0% of the 200bp reads is masked by N ACGTN
@@ -116,7 +116,7 @@ optional arguments:
 
 ```
 function        SAMPLE_SIZE     UNIQUE_SAMPLE   DEMULTIPLEXED_SAMPLE    READ_LENGTH     N_REGION        NUM_N   REGION_N_FCT    TOTAL_N_FCT     TIMESPENT       STARTING_FCT    INFLATION_FCT   SOURCE_READS    MEMORY_COST     i
-trie    1040    574     574     200     [0.0, 1.0]      10.0    0.05    0.05    0.40281282365322113     0.8     1.3     data/randomReads_1k_200bp.csv   0.05796102527529001     3
+trie    1040    574     574     200     [0.0, 1.0]      10.0    0.05    0.05    0.40281282365322113     0.8     1.3     ../test_data/randomReads_1k_200bp.csv   0.05796102527529001     3
 ```
 
 ### Detailed command-line usage document, and additional arguments:
