@@ -1,17 +1,19 @@
 # TrieDedup: A fast trie-based deduplication algorithm to handle ambiguous bases in high-throughput sequencing
 
-Motivation: High-throughput sequencing is a powerful tool and is extensively applied in biological studies. However, sequencers may produce low-quality bases, leading to ambiguous bases, 'N's. PCR duplicates introduced in library preparation should usually be removed in genomics studies, and several deduplication tools have been developed for this purpose. However, the existing tools cannot address 'N's correctly or efficiently.
+Background: High-throughput sequencing is a powerful tool that is extensively applied in biological studies. However, sequencers may produce low-quality bases, leading to ambiguous bases, 'N's. PCR duplicates introduced in library preparation should usually be removed in genomics studies, and several deduplication tools have been developed for this purpose. However, two identical reads may appear different due to ambiguous bases and the existing tools cannot address 'N's correctly or efficiently.
 
-Results: Here we proposed and implemented TrieDedup, which uses trie (prefix tree) data structure to compare and store sequences. TrieDedup can handle ambiguous base 'N's, and efficiently deduplicate at the level of raw sequences. We also reduced its memory usage by approximately 20% by implementing restrictedDict in Python. We benchmarked the performance of the algorithm and showed that TrieDedup Python version can deduplicate reads up to 270-fold faster than pairwise comparison at a cost of 32-fold higher memory usage. TrieDedup C++ version achieves 300-fold faster than pairwise comparison at a cost of only 10-fold higher memory usage, and achieves 10-fold faster than TrieDedup Python version with only 1/3 memory usage. TrieDedup algorithm may facilitate PCR deduplication, barcode or UMI assignment and repertoire diversity analysis of large scale high-throughput sequencing datasets with its ultra-fast algorithm that can account for ambiguous bases due to sequencing errors.
+Results: Here we proposed and implemented TrieDedup, which uses trie (prefix tree) data structure to compare and store sequences. TrieDedup can handle ambiguous base 'N's, and efficiently deduplicate at the level of raw sequences. We also reduced its memory usage by approximately 20% by implementing restrictedDict in Python. We benchmarked the performance of the algorithm and showed that TrieDedup can deduplicate reads up to 270-fold faster than pairwise comparison at a cost of 32-fold higher memory usage. 
+
+Conclusions: TrieDedup algorithm may facilitate PCR deduplication, barcode or UMI assignment and repertoire diversity analysis of large scale high-throughput sequencing datasets with its ultra-fast algorithm that can account for ambiguous bases due to sequencing errors.
 
 Author: Adam Yongxin Ye & Jianqiao Hu @ Boston Children's Hospital / Harvard Medical School
 
 
 ## Implementation
 
+- [Python version](https://github.com/lolrenceH/TrieDedup/tree/master/Python)
 - [C++ version](https://github.com/lolrenceH/TrieDedup/tree/master/Cpp)
 - [Java version](https://github.com/lolrenceH/TrieDedup/tree/master/Java)
-- [Python version](https://github.com/lolrenceH/TrieDedup/tree/master/Python)
 
 
 ## Wrapper
