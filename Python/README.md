@@ -23,8 +23,8 @@ Author : Jianqiao Hu & Adam Yongxin Ye @ Boston Children's Hospital (BCH)
 3. extract unique reads by their IDs  (need [seqtk](https://github.com/lh3/seqtk))
     >seqtk subseq input_seq.fq uniq_readIDs.txt >uniq_seq.fq
 
-Alternatively, you can specify option --output_format
-    >python TrieDedup.py --input input_seq.fq --output_format fasta >uniq_seq.fa
+Alternatively, you can specify option --output_format, like
+    `python TrieDedup.py --input input_seq.fq --output_format fasta >uniq_seq.fa`
 
 ### Test example
 
@@ -38,8 +38,10 @@ Note: equivalent to also adding the optional argument '-f trie', which is defaul
 [LOG] Number of raw reads that have 500 N or less = 1000
 [NOTE] Start deduplicating using trie algorithm
 [NOTE] Number of reads (raw) = 1000
+[NOTE] Number of reads (filtering out exact matches) = 992
 [NOTE] sorting...
-[NOTE] Deduplicating resulted in 920 unique reads. Time spent: 0.6605931371450424 s
+[NOTE] Number of reads (filtering out exact matches) that have 500 N or less = 992
+[NOTE] Deduplicating resulted in 920 unique reads. Time spent: 0.779429204761982 s
 ```
 
 > python3 TrieDedup.py -i ../test_data/SRR3744758_1_maskN_filtered_1k.fastq -v -f pairwise >uniq_readIDs.txt
@@ -49,8 +51,10 @@ Note: equivalent to also adding the optional argument '-f trie', which is defaul
 [LOG] Number of raw reads = 1000
 [LOG] Number of raw reads that have 500 N or less = 1000
 [NOTE] Start deduplicating using pairwise algorithm
-[NOTE] Deduplicating resulted in 920 unique reads. Time spent: 1.7831905633211136 s
+[NOTE] Deduplicating resulted in 920 unique reads. Time spent: 1.5659185945987701 s
 ```
+
+The output numbers should be the same, except for the time, which may vary depending on your machine
 
 ### Detailed command-line usage document, and other arguments
 
