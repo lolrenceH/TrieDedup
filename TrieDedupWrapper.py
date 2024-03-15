@@ -244,29 +244,12 @@ start_time = time.time()
 _print('[PYTHON-START] ' + time.ctime(), file=sys.stderr)
 
 if implementation.lower() == 'python':
-	output_txt_filename = output_filename
-	if output_txt_filename == '':
-		output_txt_filename = random_string(10)
-	output_txt_filename += '.txt'
 	script_path = os.path.join(my_script_dir, 'Python', 'TrieDedup.py')
 	command = f'python {script_path} --function {subcommand} --max_missing {max_missing} --output_format {output_format}'
 	if is_input_sorted:
 		command += ' --sorted'
-	command += f' --input {input_filename} >{output_txt_filename}'
-	check_file_then_exec_command([output_txt_filename, output_filename], command, True, True, False)
-	
-	
-	command = f'seqtk subseq {input_filename} {output_txt_filename}'
-	if output_filename != '':
-		command += f' >{output_filename}'
+	command += f' --input {input_filename} >{output_filename}'
 	check_file_then_exec_command([output_filename], command, True, True, False)
-	
-	if output_filename != '':
-		check_final_file_then_remove_intermediate_file([output_filename], [output_txt_filename])
-	else:
-		_print('[PYTHON-REMOVE] ' + output_txt_filename, file=sys.stderr)
-		os.remove(output_txt_filename)
-	
 elif implementation.lower() == 'java':
 	script_path = os.path.join(my_script_dir, 'Java', 'TrieDedup.jar')
 	command = f'java -jar {script_path} {subcommand} -m {max_missing}'
