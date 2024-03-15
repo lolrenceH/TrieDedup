@@ -38,20 +38,22 @@ Deduper::Deduper() {
 Deduper::~Deduper() {
 }
 
-std::vector<SeqIdAndSeq> Deduper::uniq_and_sort(std::vector<SeqIdAndSeq> id_seqs, bool is_input_sorted, int max_missing){
+std::vector<SeqIdAndSeq> Deduper::uniq_and_sort(std::vector<SeqIdAndSeq> id_seqs, bool is_input_sorted, int max_missing, int *traceback_mapping_vec, std::unordered_map<std::string, int> &uniq_seqs_hash, std::unordered_map<int, std::vector<int>> &uniqIdx2idxes){
 	std::cerr << string_format("[NOTE] Number of reads (raw) = %d", id_seqs.size()) << std::endl;
 	Timer tm;
-	std::unordered_map<std::string, bool> uniq_seqs_hash;
+//	std::unordered_map<std::string, int> uniq_seqs_hash;
 	std::vector<SeqIdAndSeq> uniq_id_seqs;
 	int lastCountN = -1;
 	int currentCountN;
 	std::cerr << "[STEP] uniqueing and filtering out sequences with too many Ns ..." << std::endl;
-	for(unsigned int k=0; k<id_seqs.size(); k++){
+	unsigned int k;
+	int uniqIdx;
+	for(k=0; k<id_seqs.size(); k++){
 		SeqIdAndSeq id_seq = id_seqs[k];
 //	for(SeqIdAndSeq id_seq : id_seqs){
 		// reference: https://stackoverflow.com/questions/14159682/unordered-map-which-one-is-faster-find-or-count
 		if(uniq_seqs_hash.count(id_seq.second) == 0){
-			uniq_seqs_hash[id_seq.second] = true;
+			uniq_seqs_hash[id_seq.second] = k;
 			currentCountN = countN(id_seq);
 			if(is_input_sorted){
 				if(currentCountN < lastCountN){
@@ -63,13 +65,46 @@ std::vector<SeqIdAndSeq> Deduper::uniq_and_sort(std::vector<SeqIdAndSeq> id_seqs
 			}
 			if(currentCountN <= max_missing){
 				uniq_id_seqs.push_back(id_seq);
-			}else if(is_input_sorted){
-				break;
+			}else{
+				if(is_input_sorted){
+					break;
+				}
+				if(traceback_mapping_vec != NULL){
+					traceback_mapping_vec[k] = -1;
+				}
 			}
+			if(traceback_mapping_vec != NULL){
+				uniqIdx = k;
+			}
+		}else{
+			if(traceback_mapping_vec != NULL){
+				uniqIdx = uniq_seqs_hash[id_seq.second];
+			}
+		}
+		if(traceback_mapping_vec != NULL){
+			traceback_mapping_vec[k] = uniqIdx;
+			if(uniqIdx2idxes.count(uniqIdx) == 0){
+				uniqIdx2idxes[uniqIdx] = std::vector<int>();
+			}
+			uniqIdx2idxes[uniqIdx].push_back(k);
+		}
+	}
+	if(traceback_mapping_vec != NULL){
+		for(; k<id_seqs.size(); k++){
+			traceback_mapping_vec[k] = -1;
 		}
 	}
 	std::cerr << " \t" << tm.format_elapsed_time() << std::endl;
 	std::cerr << string_format("[NOTE] Number of reads (filtered out too many Ns) = %d", uniq_id_seqs.size()) << std::endl;
+
+//	std::cerr << "[DEBUG4] traceback_mapping_vec = ";
+//	for(unsigned int k=0; k<id_seqs.size(); k++){
+//		if(k>0){
+//			std::cerr << ",";
+//		}
+//		std::cerr << traceback_mapping_vec[k];
+//	}
+//	std::cerr << std::endl;
 
 	if(! is_input_sorted){
 		std::cerr << "[STEP] sorting ..." << std::endl;
@@ -80,21 +115,31 @@ std::vector<SeqIdAndSeq> Deduper::uniq_and_sort(std::vector<SeqIdAndSeq> id_seqs
 	return uniq_id_seqs;
 }
 
-std::vector<SeqIdAndSeq> Deduper::collapseSeqTrie(std::vector<SeqIdAndSeq> uniq_id_seqs){
+std::vector<SeqIdAndSeq> Deduper::collapseSeqTrie(std::vector<SeqIdAndSeq> uniq_id_seqs, int *traceback_mapping_vec, std::unordered_map<std::string, int> &uniq_seqs_hash, std::unordered_map<int, std::vector<int>> &uniqIdx2idxes){
 	std::vector<SeqIdAndSeq> dedup_id_seqs;
 
 	ACGTNTrieNode trie;
 	for(unsigned int k=0; k<uniq_id_seqs.size(); k++){
 		SeqIdAndSeq id_seq = uniq_id_seqs[k];
-//	for(SeqIdAndSeq id_seq : id_seqs){
-//		std::cerr << id_seq.second << std::endl;
-//		std::cerr << trie.search(id_seq.second, 0) << std::endl;
-		if(! trie.search(id_seq.second, 0)){
-			trie.add(id_seq.second);
-			dedup_id_seqs.push_back(id_seq);
-
-//			write_fasta(&std::cerr, dedup_id_seqs);
-//			std::cerr << trie.toString() << std::endl;
+		if(traceback_mapping_vec == NULL){
+			if(! trie.search(id_seq.second, 0)){
+				trie.add(id_seq.second);
+				dedup_id_seqs.push_back(id_seq);
+			}
+		}else{
+			std::string matched_seq = trie.search_with_traceback(id_seq.second, 0);
+			if(matched_seq != "NULL"){
+				int uniqIdx = uniq_seqs_hash[id_seq.second];
+				std::vector<int> idxes = uniqIdx2idxes[uniqIdx];
+				for(unsigned int i=0; i<idxes.size(); i++){
+					int now_idx = idxes[i];
+					traceback_mapping_vec[now_idx] = uniq_seqs_hash[matched_seq];
+					uniqIdx2idxes[uniq_seqs_hash[matched_seq]].push_back(now_idx);
+				}
+			}else{
+				trie.add(id_seq.second);
+				dedup_id_seqs.push_back(id_seq);
+			}
 		}
 	}
 
@@ -115,7 +160,7 @@ bool Deduper::checkSeqEqual(std::string seq1, std::string seq2){
 	return true;
 }
 
-std::vector<SeqIdAndSeq> Deduper::collapseSeqPairwise(std::vector<SeqIdAndSeq> uniq_id_seqs){
+std::vector<SeqIdAndSeq> Deduper::collapseSeqPairwise(std::vector<SeqIdAndSeq> uniq_id_seqs, int *traceback_mapping_vec, std::unordered_map<std::string, int> &uniq_seqs_hash, std::unordered_map<int, std::vector<int>> &uniqIdx2idxes){
 	std::vector<SeqIdAndSeq> dedup_id_seqs;
 
 	std::unordered_map<std::string, void *> uniq_hash;
@@ -123,15 +168,37 @@ std::vector<SeqIdAndSeq> Deduper::collapseSeqPairwise(std::vector<SeqIdAndSeq> u
 	for(unsigned int k=0; k<uniq_id_seqs.size(); k++){
 		SeqIdAndSeq id_seq = uniq_id_seqs[k];
 		bool has_found = false;
-		for ( auto it = uniq_hash.begin(); it != uniq_hash.end(); it++ ){
-			if(Deduper::checkSeqEqual(id_seq.second, it->first)){
-				has_found = true;
-				break;
+		if(traceback_mapping_vec == NULL){
+			for ( auto it = uniq_hash.begin(); it != uniq_hash.end(); it++ ){
+				if(Deduper::checkSeqEqual(id_seq.second, it->first)){
+					has_found = true;
+					break;
+				}
 			}
-		}
-		if(! has_found){
-			uniq_hash[id_seq.second] = (void *) NULL;
-			dedup_id_seqs.push_back(id_seq);
+			if(! has_found){
+				uniq_hash[id_seq.second] = (void *) NULL;
+				dedup_id_seqs.push_back(id_seq);
+			}
+		}else{
+			std::string matched_seq = "";
+			for ( auto it = uniq_hash.begin(); it != uniq_hash.end(); it++ ){
+				if(Deduper::checkSeqEqual(id_seq.second, it->first)){
+					matched_seq = it->first;
+					break;
+				}
+			}
+			if(matched_seq != ""){
+				int uniqIdx = uniq_seqs_hash[id_seq.second];
+				std::vector<int> idxes = uniqIdx2idxes[uniqIdx];
+				for(unsigned int i=0; i<idxes.size(); i++){
+					int now_idx = idxes[i];
+					traceback_mapping_vec[now_idx] = uniq_seqs_hash[matched_seq];
+					uniqIdx2idxes[uniq_seqs_hash[matched_seq]].push_back(now_idx);
+				}
+			}else{
+				uniq_hash[id_seq.second] = (void *) NULL;
+				dedup_id_seqs.push_back(id_seq);
+			}
 		}
 	}
 

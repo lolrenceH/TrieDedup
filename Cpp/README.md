@@ -49,6 +49,7 @@ Options:
     -m|--max-missing <int> 	max number of Ns allowed for each read (default: 9999)
     -q|--min-baseQ <int> 	bases with lower baseQ will be converted to N (default: 0)
     -t|--baseQ-shift <int> 	baseQ value shifted from char (default: 33)
+    -f|--output-format <str> 	output format [readID, sequence, fasta, dup2uniq, uniq2dup] (default: fasta)
 Supported <command>:
     sortuniq 	just uniq by sequence and sort by N, and output fasta
     trie 	deduplicate using trie algorithm
@@ -57,9 +58,11 @@ Supported <input> format:
     (automatically determined by <input>'s file extension)
 	.fasta, .fa, .fastq, .fq
 Output:  STDOUT  or  -o|--output <file>
-	in fasta format
+	format specified in -f|--output-format option
+    If set to dup2uniq, I will output 4-column tsv format: 1st-2nd columns are original readID and sequences, 3rd-4th columns are the mapped deduplicated readID and sequences.
+    If set to uniq2dup, I will output to STDOUT 5-column tsv format: 1st-2nd columns are deduplicated readID and sequences, 3rd column is frequency, 4th column is original readIDs concatenated by ',', 5th column is orignal sequences concatenated by ','.
 
-Version: 0.1.0 (2023-01-30)
+Version: 0.1.1 (2024-03-12)
 Author: Adam Yongxin Ye & Jianqiao Hu @ BCH
 ```
 

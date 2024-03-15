@@ -23,6 +23,9 @@ Author : Jianqiao Hu & Adam Yongxin Ye @ Boston Children's Hospital (BCH)
 3. extract unique reads by their IDs  (need [seqtk](https://github.com/lh3/seqtk))
     >seqtk subseq input_seq.fq uniq_readIDs.txt >uniq_seq.fq
 
+Alternatively, you can specify option --output_format
+    >python TrieDedup.py --input input_seq.fq --output_format fasta >uniq_seq.fa
+
 ### Test example
 
 > python3 TrieDedup.py -i ../test_data/SRR3744758_1_maskN_filtered_1k.fastq -v  >uniq_readIDs.txt
@@ -56,6 +59,7 @@ Note: equivalent to also adding the optional argument '-f trie', which is defaul
 usage: TrieDedup.py [-h] [--verbose] --input INPUT [--symbols SYMBOLS]
                     [--ambiguous AMBIGUOUS] [--function FUNCTION]
                     [--max_missing N] [--sorted]
+                    [--output_format OUTPUT_FORMAT]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -70,12 +74,24 @@ optional arguments:
                         A string of characters that represent ambiguous bases;
                         default is N; there can be more than one
   --function FUNCTION, -f FUNCTION
-                        Use which function to deduplicate? [trie, pairwise]
+                        Use which function to deduplicate? [sortuniq, trie,
+                        pairwise]
   --max_missing N, -N N
                         The maxinum number of ambiguous characters allowed in
                         a single read, for it to be considered
   --sorted              Use this option if the input file has been sorted by
                         the number of Ns in each read
+  --output_format OUTPUT_FORMAT, -o OUTPUT_FORMAT
+                        Output format of STDOUT; default is readID [readID,
+                        sequence, fasta, dup2uniq, uniq2dup]
+
+If --output_format is set to dup2uniq, I will output to STDOUT 4-column tsv
+format: 1st-2nd columns are original readID and sequences, 3rd-4th columns are
+the mapped deduplicated readID and sequences. If --output_format is set to
+uniq2dup, I will output to STDOUT 5-column tsv format: 1st-2nd columns are
+deduplicated readID and sequences, 3rd column is frequency, 4th column is
+original readIDs concatenated by ',', 5th column is orignal sequences
+concatenated by ','.
 ```
 
 

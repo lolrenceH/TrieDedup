@@ -2,6 +2,8 @@
 # we simplified it and added some code for benchmarking the time cost and memory usage
 # @Author : Jianqiao Hu @ BCH
 
+import sys
+
 import timeit
 import re
 from itertools import zip_longest
@@ -133,7 +135,7 @@ def findUniqueSeq(uniq_dict, search_keys, seq_dict, max_missing=3,
     return uniq_dict, search_keys, dup_keys
 
 
-def collapseSeq(seqs, max_missing=500, inner=False, hp=None):
+def collapseSeq(seqs, max_missing=500, inner=False, hp=None, should_traceback=False):
     """
     Removes duplicate sequences
 
@@ -142,9 +144,13 @@ def collapseSeq(seqs, max_missing=500, inner=False, hp=None):
       max_missing : number of ambiguous characters to allow in a unique sequence.
       inner : if True exclude consecutive outer ambiguous characters from iterations and matching.
       hp : hyp() object for memory benchmarking.
+      should_traceback : should I return mapping_vec instead of uniqIdx_vec?
 
     Returns:
-      is_uniq_vec, time cost, [memory usage]
+      uniqIdx_vec, time cost, [memory usage]
+      (or mapping_vec, time cost, [memory usage] if should_traceback=True)
+          mapping_vec[i] = -1 if seqs[i] is discarded
+          mapping_vec[i] = j  if seqs[i] is duplicates of j (j=i means uniq)
     """
     seq_dict = {}
     for i in range(len(seqs)):
@@ -170,11 +176,31 @@ def collapseSeq(seqs, max_missing=500, inner=False, hp=None):
     TIMESPENT = timeit.default_timer() - start_time
     if hp:
         h = hp.heap()
-    is_uniq_vec = [0] * len(seqs)
-    for i in range(len(seqs)):
-        if seqs[i] in uniq_dict:
-            is_uniq_vec[i] = 1
-            del uniq_dict[seqs[i]]
+#    is_uniq_vec = [0] * len(seqs)
+#    for i in range(len(seqs)):
+#        if seqs[i] in uniq_dict:
+#            is_uniq_vec[i] = 1
+#            del uniq_dict[seqs[i]]
+#    if hp:
+#        return [is_uniq_vec, TIMESPENT, h]
+#    return [is_uniq_vec, TIMESPENT]
+    if should_traceback:
+        mapping_vec = [-1] * len(seqs)
+        for seq, dup_set in uniq_dict.items():
+            uniqIdx = dup_set.keys[0]
+            for now_idx in dup_set.keys:
+                mapping_vec[now_idx] = uniqIdx
+        if hp:
+            return [mapping_vec, TIMESPENT, h]
+        return [mapping_vec, TIMESPENT]
+        
+    uniqIdx_vec = []
+    for seq, dup_set in uniq_dict.items():
+#        print(f'seq={seq}, dup_set.keys={dup_set.keys[0]}', file=sys.stderr)
+        uniqIdx = dup_set.keys[0]
+#        print(f'uniqIdx={uniqIdx}', file=sys.stderr)
+        uniqIdx_vec.append(uniqIdx)
+#    uniqIdx_vec = sorted(uniqIdx_vec)
     if hp:
-        return [is_uniq_vec, TIMESPENT, h]
-    return [is_uniq_vec, TIMESPENT]
+        return [uniqIdx_vec, TIMESPENT, h]
+    return [uniqIdx_vec, TIMESPENT]

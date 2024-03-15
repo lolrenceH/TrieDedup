@@ -19,11 +19,11 @@ public:
 	Deduper();
 	virtual ~Deduper();
 
-	static std::vector<SeqIdAndSeq> uniq_and_sort(std::vector<SeqIdAndSeq> id_seqs, bool is_input_sorted, int max_missing);
-	static std::vector<SeqIdAndSeq> collapseSeqTrie(std::vector<SeqIdAndSeq> uniq_id_seqs);
+	static std::vector<SeqIdAndSeq> uniq_and_sort(std::vector<SeqIdAndSeq> id_seqs, bool is_input_sorted, int max_missing, int *traceback_mapping_vec, std::unordered_map<std::string, int> &uniq_seqs_hash, std::unordered_map<int, std::vector<int>> &uniqIdx2idxes);
+	static std::vector<SeqIdAndSeq> collapseSeqTrie(std::vector<SeqIdAndSeq> uniq_id_seqs, int *traceback_mapping_vec, std::unordered_map<std::string, int> &uniq_seqs_hash, std::unordered_map<int, std::vector<int>> &uniqIdx2idxes);
 
 	static bool checkSeqEqual(std::string seq1, std::string seq2);
-	static std::vector<SeqIdAndSeq> collapseSeqPairwise(std::vector<SeqIdAndSeq> uniq_id_seqs);
+	static std::vector<SeqIdAndSeq> collapseSeqPairwise(std::vector<SeqIdAndSeq> uniq_id_seqs, int *traceback_mapping_vec, std::unordered_map<std::string, int> &uniq_seqs_hash, std::unordered_map<int, std::vector<int>> &uniqIdx2idxes);
 };
 
 #endif /* DEDUPER_H_ */
