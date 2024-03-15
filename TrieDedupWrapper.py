@@ -172,14 +172,15 @@ def str2bool(x):
 
 usage = '''
 Usage: python this.py <implementation> <subcommand> <input>
-	[output] [max_missing] [sorted]
+	[output_format] [output] [max_missing] [sorted]
 
 <implementation>\t one of 'cpp', 'java' or 'python'
 <subcommand>    \t one of 'sortuniq', 'trie' or 'pairwise'
 <input>         \t input *.fasta, *.fa, *.fastq or *.fq file
-[output]        \t output *.fasta or *.fa (optional; default: empty = STDOUT)
-[max_missing]   \t max allowed ambiguous Ns per read (optional; default: 9999)
-[sorted]        \t is the input file has already been sorted by the number of Ns (optional; default: False)
+[output_format] \t one of 'fasta', 'readID', 'sequence', 'dup2uniq', or 'uniq2dup' (default: fasta)
+[output]        \t output filename (default: empty = STDOUT)
+[max_missing]   \t max allowed ambiguous Ns per read (default: 9999)
+[sorted]        \t is the input file has already been sorted by the number of Ns (default: False)
 '''
 
 if len(sys.argv) < 4:
@@ -199,6 +200,20 @@ if implementation.lower() == 'python' and subcommand.lower() == 'sortuniq':
 	die('Error: python implementation does not support subcommand sortuniq.  Please switch to cpp or java implementation instead.' + usage)
 
 arg_idx = 4
+output_format = 'fasta'
+if len(sys.argv) > arg_idx:
+	output_format = sys.argv[arg_idx]
+
+output_format = output_format.lower()
+if output_format == 'fasta':
+	pass   # good choice
+elif output_format == 'readID' or output_format == 'sequence' or output_format == 'dup2uniq' or output_format == 'uniq2dup':
+	if implementation.lower() != 'cpp' and implementation.lower() != 'python':
+		die('Error: only implementation' + "'cpp' and 'python'" + f' support output_format "{output_format}"' + usage)
+else:
+	die(f'Error: unrecognized output_format "{output_format}"' + ", which should be one of 'fasta', 'readID', 'sequence', 'dup2uniq', or 'uniq2dup'" + usage)
+
+arg_idx += 1
 output_filename = ''
 if len(sys.argv) > arg_idx:
 	output_filename = sys.argv[arg_idx]
@@ -216,6 +231,7 @@ if len(sys.argv) > arg_idx:
 _print(f'[CMD-ARG] implementation = {implementation}', file=sys.stderr)
 _print(f'[CMD-ARG] subcommand = {subcommand}', file=sys.stderr)
 _print(f'[CMD-ARG] input_filename = {input_filename}', file=sys.stderr)
+_print(f'[CMD-ARG] output_format = {output_format}', file=sys.stderr)
 _print(f'[CMD-ARG] output_filename = {output_filename}', file=sys.stderr)
 _print(f'[CMD-ARG] max_missing = {max_missing}', file=sys.stderr)
 _print(f'[CMD-ARG] is_input_sorted = {is_input_sorted}', file=sys.stderr)
@@ -233,7 +249,7 @@ if implementation.lower() == 'python':
 		output_txt_filename = random_string(10)
 	output_txt_filename += '.txt'
 	script_path = os.path.join(my_script_dir, 'Python', 'TrieDedup.py')
-	command = f'python {script_path} --function {subcommand} --max_missing {max_missing}'
+	command = f'python {script_path} --function {subcommand} --max_missing {max_missing} --output_format {output_format}'
 	if is_input_sorted:
 		command += ' --sorted'
 	command += f' --input {input_filename} >{output_txt_filename}'
@@ -262,7 +278,7 @@ elif implementation.lower() == 'java':
 	check_file_then_exec_command([output_filename], command, True, True, False)
 elif implementation.lower() == 'cpp':
 	script_path = os.path.join(my_script_dir, 'Cpp', 'bin', 'TrieDedup')
-	command = f'{script_path} {subcommand} -m {max_missing}'
+	command = f'{script_path} {subcommand} -m {max_missing} -f {output_format}'
 	if is_input_sorted:
 		command += ' -s'
 	if output_filename != '':

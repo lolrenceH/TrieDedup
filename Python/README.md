@@ -24,7 +24,8 @@ Author : Jianqiao Hu & Adam Yongxin Ye @ Boston Children's Hospital (BCH)
     >seqtk subseq input_seq.fq uniq_readIDs.txt >uniq_seq.fq
 
 Alternatively, you can specify option --output_format, like
-    `python TrieDedup.py --input input_seq.fq --output_format fasta >uniq_seq.fa`
+
+> python TrieDedup.py --input input_seq.fq --output_format fasta >uniq_seq.fa
 
 ### Test example
 

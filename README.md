@@ -23,21 +23,22 @@ After you compile C++ code following its [README](https://github.com/lolrenceH/T
 > python TrieDedupWrapper.py
 ```
 Usage: python this.py <implementation> <subcommand> <input>
-	[output] [max_missing] [sorted]
+	[output_format] [output] [max_missing] [sorted]
 
 <implementation>	 one of 'cpp', 'java' or 'python'
 <subcommand>    	 one of 'sortuniq', 'trie' or 'pairwise'
 <input>         	 input *.fasta, *.fa, *.fastq or *.fq file
-[output]        	 output *.fasta or *.fa (optional; default: empty = STDOUT)
-[max_missing]   	 max allowed ambiguous Ns per read (optional; default: 9999)
-[sorted]        	 is the input file has already been sorted by the number of Ns (optional; default: False)
+[output_format] 	 one of 'fasta', 'readID', 'sequence', 'dup2uniq', or 'uniq2dup' (default: fasta)
+[output]        	 output filename (default: empty = STDOUT)
+[max_missing]   	 max allowed ambiguous Ns per read (default: 9999)
+[sorted]        	 is the input file has already been sorted by the number of Ns (default: False)
 ```
 
 ### Test example
 
-> python TrieDedupWrapper.py python trie test_data/randomReads_1k_200bp.fasta test_out.python_trie.fa
+> python TrieDedupWrapper.py python trie test_data/randomReads_1k_200bp.fasta fasta test_out.python_trie.fa
 
-> python TrieDedupWrapper.py cpp trie test_data/randomReads_1k_200bp.fasta test_out.cpp_trie.fa
+> python TrieDedupWrapper.py cpp trie test_data/randomReads_1k_200bp.fasta fasta test_out.cpp_trie.fa
 
 > diff <(grep "^>" test_out.python_trie.fa | sort) <(grep "^>" test_out.cpp_trie.fa | sort)
 
